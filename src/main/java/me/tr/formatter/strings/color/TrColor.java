@@ -27,6 +27,22 @@ public class TrColor {
         return hex;
     }
 
+    public String toMiniMessage() {
+        return "<" + hex + ">";
+    }
+
+    public String toANSIForeground() {
+        return ESC + "[38;2;" + getArgb()[0] + ";" + getArgb()[1] + ";" + getArgb()[2] + "m";
+    }
+
+    public String toANSIBackground() {
+        return ESC + "[48;2;" + getArgb()[0] + ";" + getArgb()[1] + ";" + getArgb()[2] + "m";
+    }
+
+    public static String ansiReset() {
+         return ESC + "[0m";
+    }
+
     public String applyAsMiniMessage(String str) {
         return "<" + hex + ">" + str;
     }

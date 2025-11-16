@@ -57,7 +57,7 @@ public class Params {
         String param = asString(index);
         try {
             return Integer.parseInt(param.trim());
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             return -1;
         }
     }
@@ -66,7 +66,7 @@ public class Params {
         String param = asString(index);
         try {
             return Long.parseLong(param.trim());
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             return -1L;
         }
     }
@@ -75,7 +75,7 @@ public class Params {
         String param = asString(index);
         try {
             return Float.parseFloat(param.trim());
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             return -1F;
         }
     }
@@ -84,7 +84,7 @@ public class Params {
         String param = asString(index);
         try {
             return Double.parseDouble(param.trim());
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException ignored) {
             return -1.0;
         }
     }
