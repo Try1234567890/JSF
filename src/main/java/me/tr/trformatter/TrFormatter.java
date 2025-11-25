@@ -25,4 +25,6 @@ public class TrFormatter {
     public static String resolvePlaceholders(String str) {
         return PlaceholderParser.parse(str).resolve();
     }
+
+
 }
