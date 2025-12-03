@@ -14,10 +14,6 @@ public abstract class Placeholder {
     private int start, end;
     private int requiredParams;
 
-    public Placeholder(UID uniqueID) {
-        this.uniqueID = uniqueID;
-    }
-
     public Placeholder(UID uniqueID, Params params, Function[] functions, int start, int end, int requiredParams) {
         if (params.getParams().length < requiredParams) {
             throw new InsufficientParamsException("Placeholder " + uniqueID.getId() + " need at least " + requiredParams + " parameters to work properly. Found: " + params.getParams().length);
@@ -28,6 +24,10 @@ public abstract class Placeholder {
         this.start = start;
         this.end = end;
         this.requiredParams = requiredParams;
+    }
+
+    public Placeholder(UID uniqueID) {
+        this.uniqueID = uniqueID;
     }
 
     public int getRequiredParams() {
@@ -79,6 +79,8 @@ public abstract class Placeholder {
     }
 
     public abstract String process(String str);
+
+    public abstract Placeholder newInstance(Params params, Function[] functions, int start, int end);
 
     @Override
     public String toString() {

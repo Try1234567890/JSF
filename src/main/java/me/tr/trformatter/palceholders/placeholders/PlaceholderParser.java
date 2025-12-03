@@ -36,12 +36,9 @@ public class PlaceholderParser {
                 if (functionsStr != null && !functionsStr.isEmpty()) {
                     functions = FunctionParser.parse(functionsStr);
                 }
-                try {
-                    placeholders.add(placeholder.getClass().getConstructor(Params.class, Function[].class, int.class, int.class).newInstance(params, functions, matcher.start(), matcher.end()));
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    throw new RuntimeException("An error occurs while parsing " + nameStr, e);
-                }
+                placeholders.add(
+                        placeholder.newInstance(params, functions, matcher.start(), matcher.end())
+                );
             }
         }
         return new PlaceholderResolver(placeholders, str);

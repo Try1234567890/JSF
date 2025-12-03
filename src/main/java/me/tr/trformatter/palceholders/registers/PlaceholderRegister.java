@@ -9,7 +9,8 @@ import java.lang.reflect.Modifier;
 
 public class PlaceholderRegister {
 
-    public static void register(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static void register(Class<?> clazz)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (Placeholder.class.isAssignableFrom(clazz)
                 && !Modifier.isAbstract(clazz.getModifiers())
                 && !Modifier.isInterface(clazz.getModifiers())) {

@@ -23,4 +23,9 @@ public class Property extends Placeholder {
         }
         return System.getProperty(property);
     }
+
+    @Override
+    public Property newInstance(Params params, Function[] functions, int start, int end) {
+        return new Property(params, functions, start, end);
+    }
 }

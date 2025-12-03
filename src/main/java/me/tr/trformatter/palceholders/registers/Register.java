@@ -3,6 +3,7 @@ package me.tr.trformatter.palceholders.registers;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
@@ -17,9 +18,7 @@ public class Register {
      *
      * @param file File representing the jar to open.
      */
-    public static void register(File file) throws IOException, ClassNotFoundException,
-            InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException {
+    public static void register(File file) {
         try (JarFile jar = new JarFile(file);
              URLClassLoader classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Enumeration<JarEntry> entries = jar.entries();
@@ -32,6 +31,21 @@ public class Register {
                     TagRegister.register(clazz);
                 }
             }
+        } catch (IOException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
+                 InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Auto-Register all functions found into the provided jar.
+     *
+     * @param file File representing the jar to open.
+     */
+    public static void registerAsync(File file) {
+        Thread thread = new Thread(() -> register(file));
+        thread.setName("tr-formatter-placeholders-" + System.currentTimeMillis());
+        thread.setDaemon(true);
+        thread.start();
     }
 }

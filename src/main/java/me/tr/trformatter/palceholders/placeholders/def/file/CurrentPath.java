@@ -20,4 +20,9 @@ public class CurrentPath extends Placeholder {
     public String process(String str) {
         return new Property(new Params(str, new Object[]{"user.dir"}), getFunctions(), getStart(), getEnd()).process(str);
     }
+
+    @Override
+    public Placeholder newInstance(Params params, Function[] functions, int start, int end) {
+        return new CurrentPath(params, functions, start, end);
+    }
 }

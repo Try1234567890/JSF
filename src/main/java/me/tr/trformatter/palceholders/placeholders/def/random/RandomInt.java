@@ -20,4 +20,9 @@ public class RandomInt extends Placeholder {
     public String process(String str) {
         return new RandomDouble(getParams(), getFunctions(), getStart(), getEnd()).process(str);
     }
+
+    @Override
+    public RandomInt newInstance(Params params, Function[] functions, int start, int end) {
+        return new RandomInt(params, functions, start, end);
+    }
 }

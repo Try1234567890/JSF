@@ -19,4 +19,9 @@ public class Env extends Placeholder {
     public String process(String str) {
         return System.getenv(str);
     }
+
+    @Override
+    public Env newInstance(Params params, Function[] functions, int start, int end) {
+        return new Env(params, functions, start, end);
+    }
 }

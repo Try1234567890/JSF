@@ -18,4 +18,9 @@ public class UUID extends Placeholder {
     public String process(String str) {
         return java.util.UUID.randomUUID().toString();
     }
+
+    @Override
+    public UUID newInstance(Params params, Function[] functions, int start, int end) {
+        return new UUID(params, functions, start, end);
+    }
 }

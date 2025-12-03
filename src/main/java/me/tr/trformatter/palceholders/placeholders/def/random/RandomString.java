@@ -36,4 +36,9 @@ public class RandomString extends Placeholder {
         }
         return string.toString();
     }
+
+    @Override
+    public RandomString newInstance(Params params, Function[] functions, int start, int end) {
+        return new RandomString(params, functions, start, end);
+    }
 }

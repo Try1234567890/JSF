@@ -7,6 +7,6 @@ public class Space  extends Tag {
 
 
     public Space() {
-        super(new UID("space"), " ");
+        super(new UID("Space"), " ");
     }
 }

@@ -9,7 +9,7 @@ public class TagResolver {
     }
 
     public static String resolve(String str, String placeholder) {
-        for (Tag tag : TagsRegistry.getInstance().getRegistry().values()) {
+        for (Tag tag : TagsRegistry.getInstance().values()) {
             tag.setStr(placeholder);
             str = tag.resolve(str, tag.getReplace());
         }

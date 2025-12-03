@@ -21,10 +21,7 @@ public class TrFormatter {
     public static EscapeCharacter PARAM_PARAMS_END = new EscapeCharacter("]");
     public static EscapeCharacter PARAM_PARAMS_SEPARATOR = new EscapeCharacter("&");
 
-
-    public static String resolvePlaceholders(String str) {
+    public static String resolve(String str) {
         return PlaceholderParser.parse(str).resolve();
     }
-
-
 }

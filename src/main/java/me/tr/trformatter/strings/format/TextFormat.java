@@ -17,8 +17,9 @@ public abstract class TextFormat {
 
     public String toSpaceFormat() {
         if (getSeparator() == null || getSeparator().isEmpty()) {
-            if (hasDefaultSeparator())
+            if (hasDefaultSeparator()) {
                 return toSpaceFormatWithDefaultSeparator();
+            }
             return toSpaceFormatWithoutSeparator();
         } else {
             StringBuilder sb = new StringBuilder();
@@ -72,7 +73,9 @@ public abstract class TextFormat {
     protected String toString(List<Character> list) {
         StringBuilder sb = new StringBuilder();
 
-        for (Character ch : list) sb.append(ch);
+        for (Character ch : list) {
+            sb.append(ch);
+        }
 
         return sb.toString();
     }

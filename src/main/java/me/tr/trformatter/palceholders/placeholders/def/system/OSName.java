@@ -10,12 +10,17 @@ public class OSName extends Placeholder {
         super(new UID("OSName"));
     }
 
-    public OSName(Params params, Function[] functions, int start, int end, int requiredParams) {
-        super(new UID("OSName"), params, functions, start, end, requiredParams);
+    public OSName(Params params, Function[] functions, int start, int end) {
+        super(new UID("OSName"), params, functions, start, end, 0);
     }
 
     @Override
     public String process(String str) {
         return new Property(new Params(str, new Object[]{"os.name"}), getFunctions(), getStart(), getEnd()).process(str);
+    }
+
+    @Override
+    public OSName newInstance(Params params, Function[] functions, int start, int end) {
+        return new OSName(params, functions, start, end);
     }
 }

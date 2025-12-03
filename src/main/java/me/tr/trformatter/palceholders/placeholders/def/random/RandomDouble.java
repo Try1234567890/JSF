@@ -29,4 +29,9 @@ public class RandomDouble extends Placeholder {
         }
         return String.valueOf(new java.util.Random().nextDouble(min, max));
     }
+
+    @Override
+    public RandomDouble newInstance(Params params, Function[] functions, int start, int end) {
+        return new RandomDouble(params, functions, start, end);
+    }
 }

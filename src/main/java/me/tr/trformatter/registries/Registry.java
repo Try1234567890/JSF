@@ -1,10 +1,9 @@
 package me.tr.trformatter.registries;
 
 import me.tr.trformatter.uids.UID;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Registry<T> {
     private final Map<UID, T> registry = new HashMap<>();
@@ -33,7 +32,7 @@ public class Registry<T> {
      * @param id The ids to search into registry.
      * @return the found value that can be null if nothing is found.
      */
-    public @Nullable T get(UID id) {
+    public T get(UID id) {
         return registry.get(id);
     }
 
@@ -43,13 +42,13 @@ public class Registry<T> {
      * @param id The ids to search into registry.
      * @return the found value that can be null if nothing is found.
      */
-    public @Nullable T get(String id) {
-        for (Map.Entry<UID, T> entry : registry.entrySet()) {
-            if (entry.getKey().equals(id)) {
-                return entry.getValue();
-            }
-        }
-        return null;
+    public T get(String id) {
+        return registry.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().getId().equals(id)
+                        || Arrays.asList(entry.getKey().getAliases()).contains(id))
+                .map(Map.Entry::getValue)
+                .findFirst().orElse(null);
     }
 
     /**
@@ -66,8 +65,12 @@ public class Registry<T> {
         return false;
     }
 
-    public Map<UID, T> getRegistry() {
-        return registry;
+    public Set<UID> keys() {
+        return registry.keySet();
+    }
+
+    public Collection<T> values() {
+        return registry.values();
     }
 
     public static PlaceholdersRegistry getPlaceholderRegistry() {
@@ -80,5 +83,10 @@ public class Registry<T> {
 
     public static TagsRegistry getTagsRegistry() {
         return TagsRegistry.getInstance();
+    }
+
+    @Override
+    public String toString() {
+        return registry.toString();
     }
 }

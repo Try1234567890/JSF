@@ -5,8 +5,6 @@ import me.tr.trformatter.TrValidator;
 import me.tr.trformatter.palceholders.placeholders.Placeholder;
 import me.tr.trformatter.strings.format.FormatResult;
 import me.tr.trformatter.strings.format.TextFormat;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -92,7 +90,7 @@ public class TrString {
      * @param placeholders The placeholders to replace.
      * @return A new string with all placeholders replaced.
      */
-    public String replace(Placeholder @NotNull ... placeholders) {
+    public String replace(Placeholder... placeholders) {
         String newStr = getString();
         for (Placeholder placeholder : placeholders)
             newStr = placeholder.process(getString());
@@ -177,7 +175,7 @@ public class TrString {
      * @return A new string representing the substring from the index 0 to the provided index.
      * @throws NullPointerException if the index is null
      */
-    public String truncate(int index, @Nullable String end) {
+    public String truncate(int index, String end) {
         return truncate(index) + (TrValidator.isNull(end) ? "" : end);
     }
 
@@ -193,9 +191,10 @@ public class TrString {
         TrValidator.isNull(character, "The character is null.");
         int count = 0;
 
-        for (char c : getString().toCharArray())
+        for (char c : getString().toCharArray()) {
             if (c == character)
                 count++;
+        }
 
         return count;
     }
@@ -246,15 +245,11 @@ public class TrString {
      *
      * @param search If the string to check for.
      * @return {@code true} if string contains the provided one, otherwise {@code false}.
+     * @throws NullPointerException if the string is null
      */
     public boolean containsIgnoreCase(String search) {
-        if (getString().toLowerCase().contains(search))
-            return true;
-
-        if (getString().toUpperCase().contains(search))
-            return true;
-
-        return getString().contains(search);
+        TrValidator.isNull(search, "The string is null");
+        return getString().toLowerCase().contains(search.toLowerCase());
     }
 
     /**

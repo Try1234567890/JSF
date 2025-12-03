@@ -52,6 +52,11 @@ public class External extends Placeholder {
         }
     }
 
+    @Override
+    public External newInstance(Params params, Function[] functions, int start, int end) {
+        return new External(params, functions, start, end);
+    }
+
 
     private Object invoke(Method method, Object instance, Object[] params) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         if (params.length > 0) {

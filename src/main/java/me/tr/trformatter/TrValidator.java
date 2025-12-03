@@ -25,7 +25,7 @@ public class TrValidator {
      *     <ul>If obj is {@link OptionalInt} and it's empty, is considered null.</ul>
      *     <ul>If obj is {@link OptionalLong} and it's empty, is considered null.</ul>
      *     <ul>If obj is {@link OptionalDouble} and it's empty, is considered null.</ul>
-     *     <ul>If obj is {@link File} and it not exists or is empty, is considered null.</ul>
+     *     <ul>If obj is {@link File} and it not exists, is considered null.</ul>
      *     <ul>If obj is {@link Path} and it not exists or is empty, is considered null.</ul>
      *     <ul>If obj is {@link UUID} and it's empty (00000000-0000-0000-0000-000000000000),
      *     is considered null.</ul>
@@ -41,27 +41,23 @@ public class TrValidator {
      * @return {@code true} if object is {@code null}, otherwise {@code false}.
      */
     public static boolean isNull(Object obj) {
-        try {
-            return switch (obj) {
-                case null -> true;
-                case CharSequence s -> s.toString().trim().isEmpty();
-                case Number n -> n.doubleValue() < 0;
-                case Collection<?> c -> c.isEmpty();
-                case Map<?, ?> m -> m.isEmpty();
-                case Object[] arr -> arr.length == 0;
-                case Optional<?> opt -> opt.isEmpty();
-                case OptionalInt opt -> opt.isEmpty();
-                case OptionalLong opt -> opt.isEmpty();
-                case OptionalDouble opt -> opt.isEmpty();
-                case File file -> !file.exists() || file.length() == 0;
-                case Path path -> !Files.exists(path) || Files.size(path) == 0;
-                case UUID uuid -> uuid.getMostSignificantBits() == 0 &&
-                        uuid.getLeastSignificantBits() == 0;
-                default -> false;
-            };
-        } catch (Exception ignore) {
-        }
-        return false;
+        return switch (obj) {
+            case null -> true;
+            case CharSequence s -> s.toString().trim().isEmpty();
+            case Number n -> n.doubleValue() < 0;
+            case Collection<?> c -> c.isEmpty();
+            case Map<?, ?> m -> m.isEmpty();
+            case Object[] arr -> arr.length == 0;
+            case Optional<?> opt -> opt.isEmpty();
+            case OptionalInt opt -> opt.isEmpty();
+            case OptionalLong opt -> opt.isEmpty();
+            case OptionalDouble opt -> opt.isEmpty();
+            case File file -> !file.exists();
+            case Path path -> !Files.exists(path);
+            case UUID uuid -> uuid.getMostSignificantBits() == 0 &&
+                    uuid.getLeastSignificantBits() == 0;
+            default -> false;
+        };
     }
 
     /**
