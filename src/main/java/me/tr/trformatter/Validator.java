@@ -1,5 +1,6 @@
 package me.tr.trformatter;
 
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -21,7 +22,6 @@ public class Validator {
      *     <ul>If obj is {@link OptionalLong} and it's empty, is considered null.</ul>
      *     <ul>If obj is {@link OptionalDouble} and it's empty, is considered null.</ul>
      * </p>
-     * <p>
      *
      * @param obj The object to checks if it is null.
      * @return {@code true} if object is {@code null}, otherwise {@code false}.
@@ -31,6 +31,7 @@ public class Validator {
             case null -> true;
             case CharSequence s -> s.toString().trim().isEmpty();
             case Number n -> n.doubleValue() < 0;
+            case Array arr -> Array.getLength(arr) == 0;
             case Optional<?> opt -> opt.isEmpty();
             case OptionalInt opt -> opt.isEmpty();
             case OptionalLong opt -> opt.isEmpty();
@@ -50,12 +51,6 @@ public class Validator {
      *     <ul>If obj is {@link OptionalInt} and it's empty, is considered null.</ul>
      *     <ul>If obj is {@link OptionalLong} and it's empty, is considered null.</ul>
      *     <ul>If obj is {@link OptionalDouble} and it's empty, is considered null.</ul>
-     * </p>
-     * <p>
-     *     <ul>
-     *         If an error occurs while processing some checking (like {@link Files#size(Path)})
-     *         {@code false} will be returned.
-     *     </ul>
      * </p>
      *
      * @param obj The object to checks if it is null.
