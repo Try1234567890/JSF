@@ -14,7 +14,7 @@
 
 ## System Architecture:
 
-- **Placeholder**: The complete unit of code formed by combining a Placeholder and a Function. It represents the entire
+- **Placeholder**: The complete unit of code formed by combining Tag, Functions and Conditions. It represents the entire
   logic required to produce a specific output.
 - **Component**: A generic term for the building blocks of an expression. Both Placeholders and Functions are
   categorized as components.
