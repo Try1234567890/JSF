@@ -14,15 +14,17 @@
 
 ## System Architecture:
 
-- **Expression**: The complete unit of code formed by combining a Placeholder and a Function. It represents the entire
+- **Placeholder**: The complete unit of code formed by combining a Placeholder and a Function. It represents the entire
   logic required to produce a specific output.
 - **Component**: A generic term for the building blocks of an expression. Both Placeholders and Functions are
   categorized as components.
 - **Phase**: A specific stage in the processing lifecycle. It describes the "journey" a Component passes through before
   being evaluated and replaced.
-- **Placeholder**: The primary component responsible for generating the initial data. It acts as the core element
+- **Tag**: The primary component responsible for generating the initial data. It acts as the core element
   eventually substituted by the final output.
-- **Function**: A component designed to intercept and modify the Placeholder's output. It applies additional
+- **Condition**: The condition makes possible show final result only if some requirement are respected,
+  otherwise the placeholder will be simply removed.
+- **Function**: A component designed to intercept and modify the Tag's output. It applies additional
   transformations, filters, or logic to the data.
 
 ## Default Tags:
@@ -31,7 +33,7 @@
     - *Definition*: Reads and returns the content of a specified file. The system implements an internal cache (
       FileHistory) to optimize performance, updating only if the file size changes.
     - *Params*:
-        - "file" or path:
+        - "file" or "path":
             - **Definition**: The path to the file to be read;
             - **Valid Options**: A valid file path string.
             - **Default**: An exception is thrown if not specified.
