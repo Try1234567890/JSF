@@ -1,13 +1,14 @@
 package me.tr.trformatter.defaults.tags.sendmessage;
 
-import me.tr.trformatter.analysis.lexer.tokens.params.manager.ParamsContainer;
 import me.tr.trformatter.components.Tag;
+import me.tr.trformatter.phases.analysis.lexer.tokens.params.manager.ParamsContainer;
 import me.tr.trformatter.uids.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 
 public class SendMessage extends Tag {
 
@@ -41,21 +42,20 @@ public class SendMessage extends Tag {
     }
 
     private String getMessage(ParamsContainer params) {
-        String msg = params.getAs("message", String.class);
-        if (msg == null) {
+        Optional<String> msg = params.getAs("message", String.class);
+        if (msg.isEmpty()) {
             LOGGER.warn("The message is null for send message, using an empty string.");
             return "";
         }
-        return msg;
+        return msg.get();
     }
 
     private OutputStream getOut(ParamsContainer params) {
-        String out = params.getAs("out", String.class);
+        String out = params.getAsOrNull("out", String.class);
         return SendMessageOutput.parse(out).getOut(out);
     }
 
     private String getPrefix(ParamsContainer params) {
-        String prefix = params.getAs("prefix", String.class);
-        return prefix == null ? "" : prefix;
+        return params.getAs("prefix", String.class).orElse("");
     }
 }

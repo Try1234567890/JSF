@@ -1,7 +1,8 @@
 package me.tr.trformatter.registries;
 
 import me.tr.trformatter.components.Condition;
-import me.tr.trformatter.defaults.conditions.comparable.iftime.IfTime;
+import me.tr.trformatter.defaults.conditions.IfDate;
+import me.tr.trformatter.defaults.conditions.IfTime;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
 
@@ -15,6 +16,7 @@ public class ConditionsRegistry extends Registry<UID, Condition> {
 
     private ConditionsRegistry() {
         register(new IfTime());
+        register(new IfDate());
     }
 
     public static ConditionsRegistry getInstance() {

@@ -74,7 +74,10 @@ public enum SendMessageOutput {
     }
 
     public static SendMessageOutput parse(String str) {
-        if (str == null) return SOUT;
+        if (str == null) {
+            LOGGER.warn("The send message output is null. Using \"SOUT\"");
+            return SOUT;
+        }
 
         int isColonPresent = str.indexOf(':');
         if (isColonPresent != -1) {

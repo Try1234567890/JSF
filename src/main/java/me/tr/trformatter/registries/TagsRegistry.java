@@ -1,7 +1,9 @@
 package me.tr.trformatter.registries;
 
 import me.tr.trformatter.components.Tag;
+import me.tr.trformatter.defaults.tags.readfile.ReadFile;
 import me.tr.trformatter.defaults.tags.sendmessage.SendMessage;
+import me.tr.trformatter.defaults.tags.SystemEnv;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
 
@@ -11,10 +13,12 @@ import java.util.Map;
 
 public class TagsRegistry extends Registry<UID, Tag> {
     private static TagsRegistry instance;
-    private final Map<UID, Tag> placeholders = new HashMap<>();
+    private final Map<UID, Tag> tags = new HashMap<>();
 
     private TagsRegistry() {
         register(new SendMessage());
+        register(new SystemEnv());
+        register(new ReadFile());
     }
 
     public static TagsRegistry getInstance() {
@@ -27,7 +31,7 @@ public class TagsRegistry extends Registry<UID, Tag> {
     @Override
     public void register(UID key, Tag value) {
         if (has(key)) {
-            throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the placeholder UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-OsName\").");
+            throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the tag UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-OsName\").");
         }
         super.register(key, value);
     }
@@ -35,14 +39,14 @@ public class TagsRegistry extends Registry<UID, Tag> {
     public void register(Tag value) {
         UID key = value.getUID();
         if (has(key)) {
-            throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the condition UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-IsLinux\").");
+            throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the tag UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-IsLinux\").");
         }
         super.register(key, value);
     }
 
     public Tag retrieve(String key) {
 
-        for (Map.Entry<UID, Tag> entry : placeholders.entrySet()) {
+        for (Map.Entry<UID, Tag> entry : tags.entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
                     || Arrays.asList(uid.getAliases()).contains(key)) {
@@ -55,6 +59,6 @@ public class TagsRegistry extends Registry<UID, Tag> {
 
     @Override
     protected Map<UID, Tag> getRegistry() {
-        return placeholders;
+        return tags;
     }
 }

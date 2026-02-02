@@ -1,7 +1,7 @@
 package me.tr.trformatter.components;
 
-import me.tr.trformatter.Validator;
-import me.tr.trformatter.analysis.lexer.tokens.params.manager.ParamsContainer;
+import me.tr.trformatter.utility.Validator;
+import me.tr.trformatter.phases.analysis.lexer.tokens.params.manager.ParamsContainer;
 import me.tr.trformatter.registries.TagsRegistry;
 import me.tr.trformatter.uids.UID;
 

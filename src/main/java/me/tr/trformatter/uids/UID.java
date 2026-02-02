@@ -1,6 +1,6 @@
 package me.tr.trformatter.uids;
 
-import me.tr.trformatter.Validator;
+import me.tr.trformatter.utility.Validator;
 
 import java.util.*;
 
@@ -21,12 +21,11 @@ public class UID {
      *
      * @param name    The name to assign
      * @param aliases The aliases of the id; {@code They can be null or empty}.
-     * @throws NullPointerException  if the id is null.
+     * @throws NullPointerException if the id is null.
      */
     public UID(String name, String... aliases) {
         if (Validator.isNull(name))
             throw new NullPointerException("ID cannot be null");
-
 
 
         this.name = name;
@@ -37,7 +36,7 @@ public class UID {
      * Create a new Unique Identifier instance.
      *
      * @param name The name to assign
-     * @throws NullPointerException  if the id is null.
+     * @throws NullPointerException if the id is null.
      */
     public UID(String name) {
         this(name, new String[0]);
@@ -80,6 +79,6 @@ public class UID {
 
     @Override
     public String toString() {
-        return "UID#" + hashCode() + " -> Name: \"" + name + "\"; Aliases: " + Arrays.toString(getAliases());
+        return "UID[Name: \"" + name + "\"; Aliases: " + Arrays.toString(getAliases()) + "]";
     }
 }

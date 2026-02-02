@@ -1,8 +1,7 @@
 package me.tr.trformatter.registries;
 
-import me.tr.trformatter.analysis.lexer.tokens.params.types.*;
+import me.tr.trformatter.phases.analysis.lexer.tokens.params.types.*;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,6 +35,7 @@ public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, Para
 
         types.put(CHAR::isCorrectType, CHAR);
         types.put(STRING::isCorrectType, STRING); // Is important string is after the 'char type', otherwise chars will be string too.
+
     }
 
     public static ParamsTypeRegistry getInstance() {
