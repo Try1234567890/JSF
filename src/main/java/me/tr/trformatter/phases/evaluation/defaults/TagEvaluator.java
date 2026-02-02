@@ -26,6 +26,8 @@ public class TagEvaluator implements Evaluator<EvalTag, String> {
         if (component == null) {
             throw new NullPointerException("The component is null");
         }
-        return component.getTag().evaluate(component.getParams());
+        String result = component.getTag().evaluate(component.getParams());
+
+        return new FunctionEvaluator(result).evaluate(component.getFunctions());
     }
 }

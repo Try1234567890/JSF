@@ -1,8 +1,10 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
 import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawFunctions;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawTag;
+import me.tr.trformatter.strings.CString;
 
 import java.util.List;
 
@@ -61,8 +63,17 @@ public class TagScanner extends GenericScanner {
 
     @Override
     public IndexedRawTag create(String text, int start, int end) {
-        IndexedRawParams params = ParamsScanner.INSTANCE.scanParams(text);
+        CString cText = new CString(text);
+        int separateFunctions = cText.indexOfIgnoringStrings(characters().getSeparateFunction());
 
-        return new IndexedRawTag(text, params, start, end);
+        if (separateFunctions != -1) {
+            IndexedRawParams params = ParamsScanner.INSTANCE.scanParams(text.substring(0, separateFunctions).trim());
+            IndexedRawFunctions functions = FunctionScanner.INSTANCE.scanMultiple(text.substring(separateFunctions + 1).trim());
+
+            return new IndexedRawTag(text, params, functions, start, end);
+        }
+
+        IndexedRawParams params = ParamsScanner.INSTANCE.scanParams(text);
+        return new IndexedRawTag(text, params, null, start, end);
     }
 }

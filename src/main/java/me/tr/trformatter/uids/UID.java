@@ -79,6 +79,10 @@ public class UID {
 
     @Override
     public String toString() {
-        return "UID[Name: \"" + name + "\"; Aliases: " + Arrays.toString(getAliases()) + "]";
+        return "\"" + name + "\" or " + Arrays.toString(getAliases());
+    }
+
+    public String complexToString() {
+        return "UID[Name: \"" + name + "\" | Aliases: " + Arrays.toString(getAliases()) + "]";
     }
 }

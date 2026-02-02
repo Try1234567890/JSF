@@ -7,20 +7,19 @@ public class CharactersBuilder {
     private String closeTag;
     private String openCondition;
     private String closeCondition;
-    private String groupOpenCondition;
-    private String groupCloseCondition;
     private String orCondition;
     private String andCondition;
-
+    private String separateConditions;
+    private String openFunction;
+    private String closeFunction;
+    private String separateFunction;
     private String openParams;
     private String closeParams;
     private String splitParams;
     private String associateParams;
 
-    private String splitComponents;
-
-    public CharactersBuilder setOpenCondition(String openCondition) {
-        this.openCondition = openCondition;
+    public CharactersBuilder setOpenTag(String openTag) {
+        this.openTag = openTag;
         return this;
     }
 
@@ -29,8 +28,8 @@ public class CharactersBuilder {
         return this;
     }
 
-    public CharactersBuilder setOpenTag(String openTag) {
-        this.openTag = openTag;
+    public CharactersBuilder setClosePlaceholder(String closePlaceholder) {
+        this.closePlaceholder = closePlaceholder;
         return this;
     }
 
@@ -39,23 +38,13 @@ public class CharactersBuilder {
         return this;
     }
 
-    public CharactersBuilder setClosePlaceholder(String closePlaceholder) {
-        this.closePlaceholder = closePlaceholder;
+    public CharactersBuilder setOpenCondition(String openCondition) {
+        this.openCondition = openCondition;
         return this;
     }
 
     public CharactersBuilder setCloseCondition(String closeCondition) {
         this.closeCondition = closeCondition;
-        return this;
-    }
-
-    public CharactersBuilder setGroupCloseCondition(String groupCloseCondition) {
-        this.groupCloseCondition = groupCloseCondition;
-        return this;
-    }
-
-    public CharactersBuilder setGroupOpenCondition(String groupOpenCondition) {
-        this.groupOpenCondition = groupOpenCondition;
         return this;
     }
 
@@ -66,6 +55,26 @@ public class CharactersBuilder {
 
     public CharactersBuilder setAndCondition(String andCondition) {
         this.andCondition = andCondition;
+        return this;
+    }
+
+    public CharactersBuilder setSeparateConditions(String separateConditions) {
+        this.separateConditions = separateConditions;
+        return this;
+    }
+
+    public CharactersBuilder setOpenFunction(String openFunction) {
+        this.openFunction = openFunction;
+        return this;
+    }
+
+    public CharactersBuilder setCloseFunction(String closeFunction) {
+        this.closeFunction = closeFunction;
+        return this;
+    }
+
+    public CharactersBuilder setSeparateFunction(String separateFunction) {
+        this.separateFunction = separateFunction;
         return this;
     }
 
@@ -89,28 +98,7 @@ public class CharactersBuilder {
         return this;
     }
 
-    public CharactersBuilder setSplitComponents(String splitComponents) {
-        this.splitComponents = splitComponents;
-        return this;
-    }
-
     public Characters build() {
-        return new Characters(
-                openPlaceholder,
-                closePlaceholder,
-                openTag,
-                closeTag,
-                openCondition,
-                closeCondition,
-                groupOpenCondition,
-                groupCloseCondition,
-                orCondition,
-                andCondition,
-                openParams,
-                closeParams,
-                splitParams,
-                associateParams,
-                splitComponents
-        );
+        return new Characters(openPlaceholder, closePlaceholder, openTag, closeTag, openCondition, closeCondition, orCondition, andCondition, separateConditions, openFunction, closeFunction, separateFunction, openParams, closeParams, splitParams, associateParams);
     }
 }

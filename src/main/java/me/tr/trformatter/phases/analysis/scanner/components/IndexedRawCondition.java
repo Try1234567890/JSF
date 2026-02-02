@@ -5,6 +5,6 @@ public record IndexedRawCondition(String component, IndexedRawParams params, int
 
     @Override
     public String toString() {
-        return "IRawCondition[" + component() + " | params={" + params().component() + "} & s=" + start + ", e=" + end + "]";
+        return "IRawCondition[" + component() + " | " + (hasParams() ? "params={" + params().component() + "} " : "") + "& s = " + start + ", e = " + end + "]";
     }
 }

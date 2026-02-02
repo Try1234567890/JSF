@@ -4,12 +4,14 @@ import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParam;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
 import me.tr.trformatter.strings.CString;
+import me.tr.trformatter.utility.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ParamsScanner extends GenericScanner {
     public static final ParamsScanner INSTANCE = new ParamsScanner();
+
     private static String OPEN_DEL(Characters chars) {
         return chars != null ? chars.getOpenParams() : Characters.DEF_OPEN_PARAMS;
     }
@@ -36,8 +38,8 @@ public class ParamsScanner extends GenericScanner {
         return result.isEmpty() ? null : result.getFirst();
     }
 
-    public IndexedRawParams scanParams(String text, int start, int depth) {
-        List<IndexedRawParams> result = scan(text, start, -1, depth);
+    public IndexedRawParams scanParams(String text, int start, int end) {
+        List<IndexedRawParams> result = scan(text, start, end, -1);
         return result.isEmpty() ? null : result.getFirst();
     }
 
@@ -73,6 +75,10 @@ public class ParamsScanner extends GenericScanner {
 
     @Override
     public IndexedRawParams create(String text, int start, int end) {
+        if (Validator.isNull(text)) {
+            return new IndexedRawParams(new ArrayList<>(), start, end);
+        }
+
         CString cText = new CString(text);
         String split = characters().getSplitParams();
 

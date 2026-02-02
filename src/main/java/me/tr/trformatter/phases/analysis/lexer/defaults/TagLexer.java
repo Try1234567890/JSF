@@ -1,6 +1,7 @@
 package me.tr.trformatter.phases.analysis.lexer.defaults;
 
 import me.tr.trformatter.phases.analysis.lexer.tokens.NameToken;
+import me.tr.trformatter.phases.analysis.lexer.tokens.components.FunctionToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.components.TagToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.ParamToken;
 import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
@@ -30,6 +31,10 @@ public class TagLexer extends GenericLexer<IndexedRawTag> {
         NameToken name = getName(new CString(rawComponent.component()));
         List<ParamToken> params = getParams(rawComponent);
 
+        if (rawComponent.hasFunctions()) {
+            List<FunctionToken> functions = FunctionsLexer.INSTANCE.tokenize(rawComponent.functions());
+            return new TagToken(name, params, functions);
+        }
         return new TagToken(name, params);
     }
 }

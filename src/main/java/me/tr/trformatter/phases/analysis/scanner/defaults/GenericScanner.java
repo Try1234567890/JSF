@@ -41,21 +41,6 @@ public abstract class GenericScanner implements Scanner {
         return characters;
     }
 
-    @Override
-    public List<? extends IndexedRawComponent> scan(String text, int from, int end, int depth) {
-        List<IndexedRawComponent> components = new ArrayList<>();
-        int start = Math.max(0, from);
-        CString cText = new CString(text);
-
-        SearchResult result;
-        while (((result = this.findNextComponent(cText, start)).lastIndex() != -1)
-                && (end < 0 || result.lastIndex() <= end) && (depth < 0 || components.size() < depth)) {
-            start = result.lastIndex();
-            components.addAll(result.components());
-        }
-
-        return components;
-    }
 
     public List<? extends IndexedRawComponent> scan(String text, int start, int depth) {
         return scan(text, start, -1, depth);
@@ -67,6 +52,22 @@ public abstract class GenericScanner implements Scanner {
 
     public List<? extends IndexedRawComponent> scan(String text) {
         return scan(text, -1, -1);
+    }
+
+    @Override
+    public List<? extends IndexedRawComponent> scan(String text, int from, int end, int depth) {
+        List<IndexedRawComponent> components = new ArrayList<>();
+        int start = Math.max(0, from);
+        CString cText = new CString(text);
+
+        SearchResult result;
+        while (((result = this.findNextComponent(cText, start)).lastIndex() != -1) &&
+                (end < 0 || result.lastIndex() <= end) && (depth < 0 || components.size() < depth)) {
+            start = result.lastIndex();
+            components.addAll(result.components());
+        }
+
+        return components;
     }
 
     private SearchResult findNextComponent(CString text, int start) {
@@ -100,7 +101,7 @@ public abstract class GenericScanner implements Scanner {
         // nested structures are balanced correctly to find the matching closer.
         int closeAmt = -1;
         char quoteChar = 0; // 0 means outside any string
-        char ch = text.charAt(0);
+        char ch = text.charAt(start);
 
         for (int i = start; i <= text.length(); ch = text.charAt(i), i++) {
             if (quoteChar == 0 && (ch == '\'' || ch == '\"')) {
@@ -108,7 +109,6 @@ public abstract class GenericScanner implements Scanner {
             } else if (quoteChar == ch) {
                 quoteChar = 0;
             }
-
 
             if (quoteChar == 0 && text.matchesSequence(i, openDel().toCharArray())) {
                 openAmt++;

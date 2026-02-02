@@ -17,7 +17,7 @@ public class ComponentsScannerTest {
 
     @Test
     public void scan() {
-        String text = "Placeholder Log: ${#[system_env(key='user.home')]}$ && ${#[system_env(key=${#[read_file(path='F:\\log.txt')]}$)]}$";
+        String text = "Placeholder Log: ${#[system_env(key='user.home') * %[to_lower_case(from=4,to=13)]]}$ && ${#[system_env(key=${#[read_file(path='F:\\log.txt')]}$)]}$";
 
         List<IndexedRawPlaceholder> rawPlaceholders = new PlaceholderScanner().scan(text);
 

@@ -1,6 +1,12 @@
 package me.tr.trformatter.registries;
 
 import me.tr.trformatter.components.Function;
+import me.tr.trformatter.defaults.functions.IndexOf;
+import me.tr.trformatter.defaults.functions.Replace;
+import me.tr.trformatter.defaults.functions.Split;
+import me.tr.trformatter.defaults.functions.SubString;
+import me.tr.trformatter.defaults.functions.cases.ToLowerCase;
+import me.tr.trformatter.defaults.functions.cases.ToUpperCase;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
 
@@ -13,7 +19,12 @@ public class FunctionsRegistry extends Registry<UID, Function> {
     private final Map<UID, Function> functions = new HashMap<>();
 
     private FunctionsRegistry() {
-
+        register(new ToLowerCase());
+        register(new ToUpperCase());
+        register(new IndexOf());
+        register(new Replace());
+        register(new SubString());
+        register(new Split());
     }
 
     public static FunctionsRegistry getInstance() {

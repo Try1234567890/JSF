@@ -67,12 +67,11 @@ public class PlaceholderScanner extends GenericScanner {
     @Override
     public IndexedRawPlaceholder create(String text, int start, int end) {
         CString cText = new CString(text.trim());
-        String split = characters().getSplitComponents();
+        String split = characters().getSeparateConditions();
         int splitIndex = cText.indexOfIgnoringStrings(split);
 
 
         if (splitIndex == -1) {
-
             return new IndexedRawPlaceholder(getTag(text, start, text.length()), null, start, end);
         }
 

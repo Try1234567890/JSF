@@ -34,7 +34,6 @@ public interface Parameterized {
         return params().getOrNull(name);
     }
 
-
     default boolean insert(int index, Object value) {
         return params().insert(index, value);
     }
