@@ -30,8 +30,8 @@
 ## Default Tags:
 
 - `read_file`:
-    - *Definition*: Reads and returns the content of a specified file. The system implements an internal cache (
-      FileHistory) to optimize performance, updating only if the file size changes.
+    - *Definition*: Reads and returns the content of a specified file. The system implements an internal cache
+      (FileHistory) to optimize performance, updating only if the file size changes.
     - *Params*:
         - "file" or "path":
             - **Definition**: The path to the file to be read;

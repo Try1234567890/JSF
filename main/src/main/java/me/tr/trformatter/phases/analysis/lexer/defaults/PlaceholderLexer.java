@@ -6,6 +6,9 @@ import me.tr.trformatter.phases.analysis.lexer.tokens.components.TagToken;
 import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawPlaceholder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlaceholderLexer extends GenericLexer<IndexedRawPlaceholder> {
     public static final PlaceholderLexer INSTANCE = new PlaceholderLexer();
 
@@ -27,5 +30,14 @@ public class PlaceholderLexer extends GenericLexer<IndexedRawPlaceholder> {
         }
 
         return new PlaceholderToken(tag, null, rawComponent.start(), rawComponent.end());
+    }
+    public List<PlaceholderToken> tokenize(List<IndexedRawPlaceholder> rawComponents) {
+        List<PlaceholderToken> tokens = new ArrayList<>();
+
+        for (IndexedRawPlaceholder rawComponent : rawComponents) {
+            tokens.add(tokenize(rawComponent));
+        }
+
+        return tokens;
     }
 }
