@@ -1,0 +1,18 @@
+plugins {
+    id 'java-library'
+    id "me.champeau.jmh" version "0.7.3"
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':main')
+}
+jmh {
+    benchmarkMode = ['thrpt', 'avgt']
+    iterations = 5
+    warmupIterations = 3
+    fork = 2
+    resultFormat = 'JSON'
+}
