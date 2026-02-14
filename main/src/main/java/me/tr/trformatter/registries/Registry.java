@@ -1,9 +1,14 @@
 package me.tr.trformatter.registries;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Registry<K, V> {
-    protected abstract Map<K, V> getRegistry();
+    private final Map<K, V> map = new HashMap<>();
+
+    protected Map<K, V> getRegistry() {
+        return map;
+    }
 
     public V retrieve(K key) {
         return getRegistry().get(key);
@@ -24,9 +29,5 @@ public abstract class Registry<K, V> {
     public void modify(K key, K newKey, V value) {
         unregister(key);
         register(newKey, value);
-    }
-
-    public boolean equals(K k1, K k2) {
-        return k1.equals(k2);
     }
 }

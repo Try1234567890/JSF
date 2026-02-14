@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class ConditionsRegistry extends Registry<UID, Condition> {
     private static ConditionsRegistry instance;
-    private final Map<UID, Condition> conditions = new HashMap<>();
 
     private ConditionsRegistry() {
         register(new IfTime());
@@ -44,7 +43,7 @@ public class ConditionsRegistry extends Registry<UID, Condition> {
 
     public Condition retrieve(String key) {
 
-        for (Map.Entry<UID, Condition> entry : conditions.entrySet()) {
+        for (Map.Entry<UID, Condition> entry : getRegistry().entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
                     || Arrays.asList(uid.getAliases()).contains(key)) {
@@ -53,10 +52,5 @@ public class ConditionsRegistry extends Registry<UID, Condition> {
         }
 
         return null;
-    }
-
-    @Override
-    protected Map<UID, Condition> getRegistry() {
-        return conditions;
     }
 }

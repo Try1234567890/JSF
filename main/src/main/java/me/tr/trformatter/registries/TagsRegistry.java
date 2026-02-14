@@ -1,6 +1,8 @@
 package me.tr.trformatter.registries;
 
 import me.tr.trformatter.components.Tag;
+import me.tr.trformatter.defaults.tags.CurrentDir;
+import me.tr.trformatter.defaults.tags.UserHome;
 import me.tr.trformatter.defaults.tags.readfile.ReadFile;
 import me.tr.trformatter.defaults.tags.sendmessage.SendMessage;
 import me.tr.trformatter.defaults.tags.SystemEnv;
@@ -19,6 +21,8 @@ public class TagsRegistry extends Registry<UID, Tag> {
         register(new SendMessage());
         register(new SystemEnv());
         register(new ReadFile());
+        register(new CurrentDir());
+        register(new UserHome());
     }
 
     public static TagsRegistry getInstance() {

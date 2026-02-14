@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class FunctionsRegistry extends Registry<UID, Function> {
     private static FunctionsRegistry instance;
-    private final Map<UID, Function> functions = new HashMap<>();
 
     private FunctionsRegistry() {
         register(new ToLowerCase());
@@ -52,7 +51,7 @@ public class FunctionsRegistry extends Registry<UID, Function> {
 
     public Function retrieve(String key) {
 
-        for (Map.Entry<UID, Function> entry : functions.entrySet()) {
+        for (Map.Entry<UID, Function> entry : getRegistry().entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
                     || Arrays.asList(uid.getAliases()).contains(key)) {
@@ -61,10 +60,5 @@ public class FunctionsRegistry extends Registry<UID, Function> {
         }
 
         return null;
-    }
-
-    @Override
-    protected Map<UID, Function> getRegistry() {
-        return functions;
     }
 }

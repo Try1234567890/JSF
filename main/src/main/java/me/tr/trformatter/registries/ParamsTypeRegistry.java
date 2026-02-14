@@ -8,7 +8,6 @@ import java.util.function.Function;
 
 public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, ParamType<?>> {
     private static ParamsTypeRegistry instance;
-    private final Map<Function<String, Boolean>, ParamType<?>> types = new LinkedHashMap<>();
     private static final PlaceholderTokenType PLACEHOLDER = new PlaceholderTokenType();
     private static final BooleanType BOOLEAN = new BooleanType();
     private static final ByteType BYTE = new ByteType();
@@ -22,19 +21,19 @@ public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, Para
 
 
     private ParamsTypeRegistry() {
-        types.put(PLACEHOLDER::isCorrectType, PLACEHOLDER);
+        register(PLACEHOLDER::isCorrectType, PLACEHOLDER);
 
-        types.put(BOOLEAN::isCorrectType, BOOLEAN);
-        types.put(BYTE::isCorrectType, BYTE);
-        types.put(SHORT::isCorrectType, SHORT);
-        types.put(INTEGER::isCorrectType, INTEGER);
-        types.put(LONG::isCorrectType, LONG); // Is important long is the last one number, otherwise all numbers will be long.
+        register(BOOLEAN::isCorrectType, BOOLEAN);
+        register(BYTE::isCorrectType, BYTE);
+        register(SHORT::isCorrectType, SHORT);
+        register(INTEGER::isCorrectType, INTEGER);
+        register(LONG::isCorrectType, LONG); // Is important long is the last one number, otherwise all numbers will be long.
 
-        types.put(FLOAT::isCorrectType, FLOAT);
-        types.put(DOUBLE::isCorrectType, DOUBLE); // Is important double is after float, otherwise all floats will be doubles.
+        register(FLOAT::isCorrectType, FLOAT);
+        register(DOUBLE::isCorrectType, DOUBLE); // Is important double is after float, otherwise all floats will be doubles.
 
-        types.put(CHAR::isCorrectType, CHAR);
-        types.put(STRING::isCorrectType, STRING); // Is important string is after the 'char type', otherwise chars will be string too.
+        register(CHAR::isCorrectType, CHAR);
+        register(STRING::isCorrectType, STRING); // Is important string is after the 'char type', otherwise chars will be string too.
 
     }
 
@@ -47,7 +46,7 @@ public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, Para
 
     public ParamType<?> retrieve(String key) {
 
-        for (Map.Entry<Function<String, Boolean>, ParamType<?>> entry : types.entrySet()) {
+        for (Map.Entry<Function<String, Boolean>, ParamType<?>> entry : getRegistry().entrySet()) {
             if (entry.getKey().apply(key)) {
                 return entry.getValue();
             }
@@ -60,8 +59,4 @@ public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, Para
         return getInstance().retrieve(key);
     }
 
-    @Override
-    protected Map<Function<String, Boolean>, ParamType<?>> getRegistry() {
-        return types;
-    }
 }
