@@ -7,92 +7,205 @@ import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class FunctionScanner extends GenericScanner {
     public static final FunctionScanner INSTANCE = new FunctionScanner();
 
-    private static String OPEN_DEL(Characters chars) {
-        return chars != null ? chars.getOpenFunction() : Characters.DEF_CLOSE_FUNCTIONS;
-    }
-
-    private static String CLOSE_DEL(Characters chars) {
-        return chars != null ? chars.getCloseFunction() : Characters.DEF_CLOSE_FUNCTIONS;
-    }
-
 
     public FunctionScanner(Characters chars) {
-        super(OPEN_DEL(chars), CLOSE_DEL(chars), chars);
+        super(
+                chars != null ? chars.getOpenFunction() : Characters.DEF_CLOSE_FUNCTION,
+                chars != null ? chars.getCloseFunction() : Characters.DEF_CLOSE_FUNCTION,
+                chars);
     }
 
     public FunctionScanner() {
         this(new Characters());
     }
 
-    public IndexedRawFunction scanOne(String text, int from, int end) {
-        List<IndexedRawFunction> tags = scan(text, from, end, 1);
-        return tags.isEmpty() ? null : tags.getFirst();
-    }
 
-    public IndexedRawFunction scanOne(String text, int start) {
-        return scanOne(text, start, -1);
-    }
-
-    public IndexedRawFunction scanOne(String text) {
-        return scanOne(text, -1, -1);
-    }
-
-    public IndexedRawFunctions scanMultiple(String text, int from, int to, int depth) {
-        List<IndexedRawFunction> functions = super.scan(text, from, to, depth)
-                .stream()
-                .filter(comp -> comp instanceof IndexedRawFunction)
-                .map(comp -> (IndexedRawFunction) comp)
-                .toList();
-
-        if (functions.isEmpty()) {
-            return new IndexedRawFunctions(text, new ArrayList<>(), 0, 0);
-        }
-
-        int start = functions.getFirst().start();
-        int end = functions.getLast().end();
-
-        return new IndexedRawFunctions(text, functions, start, end);
-    }
-
-    public IndexedRawFunctions scanMultiple(String text, int start, int depth) {
-        return scanMultiple(text, start, -1, depth);
-    }
-
-    public IndexedRawFunctions scanMultiple(String text, int start) {
-        return scanMultiple(text, start, -1);
-    }
-
-    public IndexedRawFunctions scanMultiple(String text) {
-        return scanMultiple(text, -1, -1);
-    }
-
+    /**
+     * Scans the text and returns a list specifically of {@link IndexedRawFunction}.
+     *
+     * @param text  The source text to analyze.
+     * @param from  The starting index.
+     * @param end   The ending index (-1 for end of string).
+     * @param depth The recursion depth.
+     * @return A list of identified tags.
+     */
+    @Override
     public List<IndexedRawFunction> scan(String text, int from, int end, int depth) {
-        return super.scan(text, from, end, depth)
-                .stream()
-                .filter(comp -> comp instanceof IndexedRawFunction)
-                .map(comp -> (IndexedRawFunction) comp)
-                .toList();
+        return super.scan(text, from, end, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public List<IndexedRawFunction> scan(String text, int start, int depth) {
-        return scan(text, start, -1, depth);
+    public List<IndexedRawFunction> scan(String text, int start, int end) {
+        return super.scan(text, start, end).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
     public List<IndexedRawFunction> scan(String text, int start) {
-        return scan(text, start, -1);
+        return super.scan(text, start).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
     public List<IndexedRawFunction> scan(String text) {
-        return scan(text, -1, -1);
+        return super.scan(text).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .findFirst()
+                .orElse(new ArrayList<>());
+    }
+
+    public List<IndexedRawFunction> scanMax(String text, int start, int depth) {
+        return super.scanMax(text, start, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .findFirst()
+                .orElse(new ArrayList<>());
+    }
+
+    public List<IndexedRawFunction> scanMax(String text, int depth) {
+        return super.scanMax(text, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .findFirst()
+                .orElse(new ArrayList<>());
+    }
+
+
+    public Optional<IndexedRawFunctions> scanFunctions(String text, int from, int end, int depth) {
+        return super.scan(text, from, end, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawFunctions> scanFunctions(String text, int start, int end) {
+        return super.scan(text, start, end).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawFunctions> scanFunctions(String text, int start) {
+        return super.scan(text, start).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawFunctions> scanFunctions(String text) {
+        return super.scan(text).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawFunctions> scanMaxFunctions(String text, int start, int depth) {
+        return super.scanMax(text, start, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawFunctions> scanMaxFunctions(String text, int depth) {
+        return super.scanMax(text, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst();
+    }
+
+    public IndexedRawFunctions scanFunctionsOrNull(String text, int from, int end, int depth) {
+        return super.scan(text, from, end, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawFunctions scanFunctionsOrNull(String text, int start, int end) {
+        return super.scan(text, start, end).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawFunctions scanFunctionsOrNull(String text, int start) {
+        return super.scan(text, start).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawFunctions scanFunctionsOrNull(String text) {
+        return super.scan(text).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawFunctions scanMaxFunctionsOrNull(String text, int start, int depth) {
+        return super.scanMax(text, start, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawFunctions scanMaxFunctionsOrNull(String text, int depth) {
+        return super.scanMax(text, depth).stream()
+                .filter(IndexedRawFunctions.class::isInstance)
+                .map(IndexedRawFunctions.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Optional<IndexedRawFunction> findFirst(String text) {
+        return super.findFirst(text)
+                .filter((component) -> component instanceof IndexedRawFunction)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .map(List::getFirst);
+    }
+
+    public Optional<IndexedRawFunction> findLast(String text) {
+        return super.findFirst(text)
+                .filter((component) -> component instanceof IndexedRawFunction)
+                .map(IndexedRawFunctions.class::cast)
+                .map(IndexedRawFunctions::functions)
+                .map(List::getLast);
+    }
+
+    public Stream<IndexedRawFunctions> stream(String text) {
+        return super.stream(text)
+                .filter((component) -> component instanceof IndexedRawFunction)
+                .map(IndexedRawFunctions.class::cast);
     }
 
     @Override
     public IndexedRawFunction create(String text, int start, int end) {
-        IndexedRawParams params = ParamsScanner.INSTANCE.scanParams(text);
+        IndexedRawParams params = ParamsScanner.INSTANCE.scanParamsOrNull(text);
 
         return new IndexedRawFunction(text, params, start, end);
     }

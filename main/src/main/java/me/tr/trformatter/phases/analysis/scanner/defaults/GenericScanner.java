@@ -5,130 +5,183 @@ import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawComponent;
 import me.tr.trformatter.strings.CString;
 import me.tr.trformatter.utility.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An abstract base implementation of a {@link Scanner}.
+ * This class serves as the core engine for all delimiter-based scanning operations.
+ * It handles the complexity of finding balanced delimiters (nested structures) while
+ * correctly ignoring any content inside string literals (single or double quotes) to
+ * prevent false positive matches.
+ */
 public abstract class GenericScanner implements Scanner {
-    private final Logger LOGGER = LoggerFactory.getLogger(GenericScanner.class);
     private final String openDel;
     private final String closeDel;
     private final Characters characters;
 
+    /**
+     * Initializes a new GenericScanner with specified delimiters and character rules.
+     *
+     * @param openDel    The string sequence identifying the start of a component.
+     * @param closeDel   The string sequence identifying the end of a component.
+     * @param characters The configuration for special characters. If null, default characters are used.
+     * @throws NullPointerException if openDel or closeDel are null.
+     */
     public GenericScanner(String openDel, String closeDel, Characters characters) {
-        Validator.isNull(openDel, "open delimiter is null");
-        Validator.isNull(closeDel, "close delimiter is null");
+        Validator.isNull(openDel, "Open delimiter cannot be null");
+        Validator.isNull(closeDel, "Close delimiter cannot be null");
         this.openDel = openDel;
         this.closeDel = closeDel;
         this.characters = characters == null ? new Characters() : characters;
     }
 
-    public GenericScanner(String openDel, String closeDel) {
-        this(openDel, closeDel, new Characters());
-    }
-
-    public String openDel() {
-        return openDel;
-    }
-
-    public String closeDel() {
-        return closeDel;
-    }
-
+    /**
+     * Returns the character configuration used by this scanner.
+     *
+     * @return The {@link Characters} instance containing separator and delimiter rules.
+     */
     public Characters characters() {
         return characters;
     }
 
-
-    public List<? extends IndexedRawComponent> scan(String text, int start, int depth) {
-        return scan(text, start, -1, depth);
+    /**
+     * Validates if the text has balanced delimiters.
+     * <p>
+     * <b>Note:</b> This is a simplified check for quick validation. It does not
+     * account for delimiters inside string literals. For a precise check,
+     * use the full scanning logic.
+     * </p>
+     *
+     * @param text The text to validate.
+     * @return true if the count of open delimiters matches the count of close delimiters.
+     */
+    public boolean isBalanced(String text) {
+        if (text == null) return true;
+        int balance = 0;
+        int lastIdx = 0;
+        while ((lastIdx = text.indexOf(openDel, lastIdx)) != -1) {
+            balance++;
+            lastIdx += openDel.length();
+        }
+        lastIdx = 0;
+        while ((lastIdx = text.indexOf(closeDel, lastIdx)) != -1) {
+            balance--;
+            lastIdx += closeDel.length();
+        }
+        return balance == 0;
     }
 
-    public List<? extends IndexedRawComponent> scan(String text, int start) {
-        return scan(text, start, -1);
-    }
-
-    public List<? extends IndexedRawComponent> scan(String text) {
-        return scan(text, -1, -1);
-    }
-
+    /**
+     * Implementation of the {@link Scanner#scan} contract.
+     * Iteratively searches for components within the given boundaries and recursion depth.
+     *
+     * @param text  The source text to analyze.
+     * @param from  The starting index (clamped to 0).
+     * @param end   The ending index (if negative, scans until the end of the string).
+     * @param depth The maximum number of components to find (if negative, finds all).
+     * @return A list of identified {@link IndexedRawComponent} implementations.
+     */
     @Override
     public List<? extends IndexedRawComponent> scan(String text, int from, int end, int depth) {
+        if (text == null || text.isEmpty()) return new ArrayList<>();
+
         List<IndexedRawComponent> components = new ArrayList<>();
-        int start = Math.max(0, from);
+        int currentPos = Math.max(0, from);
+        int limit = (end < 0) ? text.length() : end;
         CString cText = new CString(text);
 
-        SearchResult result;
-        while (((result = this.findNextComponent(cText, start)).lastIndex() != -1) &&
-                (end < 0 || result.lastIndex() <= end) && (depth < 0 || components.size() < depth)) {
-            start = result.lastIndex();
-            components.addAll(result.components());
-        }
+        while (currentPos < limit) {
+            SearchResult result = this.findNextComponent(cText, currentPos);
+            if (result.lastIndex() == -1) break;
 
+            if (end >= 0 && result.lastIndex() > end) break;
+
+            components.addAll(result.components());
+            currentPos = result.lastIndex();
+
+            if (depth > 0 && components.size() >= depth) break;
+        }
         return components;
     }
 
+    /**
+     * Internal method to find the next valid component starting from a specific position.
+     *
+     * @param text  The source text wrapped in a {@link CString} for utility access.
+     * @param start The index to start the search from.
+     * @return A {@link SearchResult} containing found components and the next resume index.
+     */
     private SearchResult findNextComponent(CString text, int start) {
-        List<IndexedRawComponent> rawComponents = new ArrayList<>();
-        int odLen = openDel().length();
-        int cdLen = closeDel().length();
+        int o = text.indexOfIgnoringStrings(openDel, start);
+        if (o == -1) return new SearchResult(new ArrayList<>(), -1);
 
-
-        int o = text.indexOfIgnoringStrings(openDel(), start);
-
-        if (o == -1) {
-            return new SearchResult(rawComponents, -1);
-        }
-
-        int c = findCloseIndex(text, o + odLen);
+        int contentStart = o + openDel.length();
+        int c = findCloseIndex(text, contentStart);
 
         if (c != -1) {
-            String rawComponentStr = text.substring(o + odLen, c);
-            rawComponents.add(create(rawComponentStr, o, c + cdLen));
-
-            return new SearchResult(rawComponents, c + cdLen);
+            String rawContent = text.substring(contentStart, c);
+            IndexedRawComponent comp = create(rawContent, o, c + closeDel.length());
+            return new SearchResult(List.of(comp), c + closeDel.length());
         }
 
-        return new SearchResult(rawComponents, o + odLen);
+        return new SearchResult(new ArrayList<>(), contentStart);
     }
 
+    /**
+     * Finds the index of the closing delimiter that correctly matches the opening one,
+     * respecting nesting levels and ignoring delimiters within quotes.
+     *
+     * @param text  The source text.
+     * @param start The index right after the first detected opening delimiter.
+     * @return The absolute index of the closing delimiter, or -1 if no matching closure is found.
+     */
     private int findCloseIndex(CString text, int start) {
         int openAmt = 0;
-        // The close counter starts at -1 to offset the fact that 'start' begins
-        // inside the placeholder (after the opening delimiter). This ensures
-        // nested structures are balanced correctly to find the matching closer.
-        int closeAmt = -1;
-        char quoteChar = 0; // 0 means outside any string
-        char ch = text.charAt(start);
+        char quoteChar = 0;
 
-        for (int i = start; i <= text.length(); ch = text.charAt(i), i++) {
+        for (int i = start; i < text.length(); i++) {
+            char ch = text.charAt(i);
+
+            // Handle Strings: if we encounter a quote, we ignore everything until the quote is closed
             if (quoteChar == 0 && (ch == '\'' || ch == '\"')) {
                 quoteChar = ch;
+                continue;
             } else if (quoteChar == ch) {
                 quoteChar = 0;
+                continue;
             }
 
-            if (quoteChar == 0 && text.matchesSequence(i, openDel().toCharArray())) {
-                openAmt++;
-            }
-
-            if (quoteChar == 0 && text.matchesSequence(i, closeDel().toCharArray())) {
-                closeAmt++;
-            }
-
-            if (openAmt == closeAmt) {
-                return i;
+            if (quoteChar == 0) {
+                if (text.matchesSequence(i, openDel.toCharArray())) {
+                    openAmt++;
+                } else if (text.matchesSequence(i, closeDel.toCharArray())) {
+                    if (openAmt == 0) return i;
+                    openAmt--;
+                }
             }
         }
-
         return -1;
     }
 
+    /**
+     * Factory method to be implemented by subclasses.
+     * Creates a specific component instance based on the raw text extracted between delimiters.
+     *
+     * @param text  The raw content found inside the delimiters.
+     * @param start The absolute start index (at the opening delimiter).
+     * @param end   The absolute end index (after the closing delimiter).
+     * @return A concrete implementation of {@link IndexedRawComponent}.
+     */
     protected abstract IndexedRawComponent create(String text, int start, int end);
 
-
+    /**
+     * A result container for a single scanning operation.
+     *
+     * @param components The list of components identified in this step.
+     * @param lastIndex  The index where the scanner should resume the next search.
+     */
     public record SearchResult(List<IndexedRawComponent> components, int lastIndex) {
     }
 }

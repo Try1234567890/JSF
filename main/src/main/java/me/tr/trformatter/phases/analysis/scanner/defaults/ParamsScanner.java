@@ -8,6 +8,8 @@ import me.tr.trformatter.utility.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ParamsScanner extends GenericScanner {
     public static final ParamsScanner INSTANCE = new ParamsScanner();
@@ -29,48 +31,191 @@ public class ParamsScanner extends GenericScanner {
         this(new Characters());
     }
 
-    public IndexedRawParams scanParams(String text, int from, int end, int depth) {
-        List<IndexedRawParams> result = super.scan(text, from, end, depth)
-                .stream()
-                .filter(comp -> comp instanceof IndexedRawParams)
-                .map(comp -> (IndexedRawParams) comp)
-                .toList();
-        return result.isEmpty() ? null : result.getFirst();
+
+    /**
+     * Scans the text and returns a list specifically of {@link IndexedRawParams}.
+     *
+     * @param text  The source text to analyze.
+     * @param from  The starting index.
+     * @param end   The ending index (-1 for end of string).
+     * @param depth The recursion depth.
+     * @return A list of identified tags.
+     */
+    @Override
+    public List<IndexedRawParam> scan(String text, int from, int end, int depth) {
+        return super.scan(text, from, end, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public IndexedRawParams scanParams(String text, int start, int end) {
-        List<IndexedRawParams> result = scan(text, start, end, -1);
-        return result.isEmpty() ? null : result.getFirst();
+    public List<IndexedRawParam> scan(String text, int start, int end) {
+        return super.scan(text, start, end).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public IndexedRawParams scanParams(String text, int start) {
-        List<IndexedRawParams> result = scan(text, start, -1);
-        return result.isEmpty() ? null : result.getFirst();
+    public List<IndexedRawParam> scan(String text, int start) {
+        return super.scan(text, start).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public IndexedRawParams scanParams(String text) {
-        List<IndexedRawParams> result = scan(text, 0, -1);
-        return result.isEmpty() ? null : result.getFirst();
+    public List<IndexedRawParam> scan(String text) {
+        return super.scan(text).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public List<IndexedRawParams> scan(String text, int from, int end, int depth) {
-        return super.scan(text, from, end, depth)
-                .stream()
-                .filter(comp -> comp instanceof IndexedRawParams)
-                .map(comp -> (IndexedRawParams) comp)
-                .toList();
+    public List<IndexedRawParam> scanMax(String text, int start, int depth) {
+        return super.scanMax(text, start, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public List<IndexedRawParams> scan(String text, int start, int depth) {
-        return scan(text, start, -1, depth);
+    public List<IndexedRawParam> scanMax(String text, int depth) {
+        return super.scanMax(text, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .findFirst()
+                .orElse(new ArrayList<>());
     }
 
-    public List<IndexedRawParams> scan(String text, int start) {
-        return scan(text, start, -1);
+
+    public Optional<IndexedRawParams> scanParams(String text, int from, int end, int depth) {
+        return super.scan(text, from, end, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst();
     }
 
-    public List<IndexedRawParams> scan(String text) {
-        return scan(text, -1, -1);
+    public Optional<IndexedRawParams> scanParams(String text, int start, int end) {
+        return super.scan(text, start, end).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawParams> scanParams(String text, int start) {
+        return super.scan(text, start).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawParams> scanParams(String text) {
+        return super.scan(text).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawParams> scanMaxParams(String text, int start, int depth) {
+        return super.scanMax(text, start, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst();
+    }
+
+    public Optional<IndexedRawParams> scanMaxParams(String text, int depth) {
+        return super.scanMax(text, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst();
+    }
+
+    public IndexedRawParams scanParamsOrNull(String text, int from, int end, int depth) {
+        return super.scan(text, from, end, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawParams scanParamsOrNull(String text, int start, int end) {
+        return super.scan(text, start, end).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawParams scanParamsOrNull(String text, int start) {
+        return super.scan(text, start).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawParams scanParamsOrNull(String text) {
+        return super.scan(text).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawParams scanMaxParamsOrNull(String text, int start, int depth) {
+        return super.scanMax(text, start, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public IndexedRawParams scanMaxParamsOrNull(String text, int depth) {
+        return super.scanMax(text, depth).stream()
+                .filter(IndexedRawParams.class::isInstance)
+                .map(IndexedRawParams.class::cast)
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    public Optional<IndexedRawParam> findFirst(String text) {
+        return super.findFirst(text)
+                .filter((component) -> component instanceof IndexedRawParams)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .map(List::getFirst);
+    }
+
+    public Optional<IndexedRawParam> findLast(String text) {
+        return super.findFirst(text)
+                .filter((component) -> component instanceof IndexedRawParams)
+                .map(IndexedRawParams.class::cast)
+                .map(IndexedRawParams::params)
+                .map(List::getLast);
+    }
+
+    public IndexedRawParam findFirstONull(String text) {
+        return findFirst(text).orElse(null);
+    }
+
+    public IndexedRawParam findLastOrNull(String text) {
+        return findLast(text).orElse(null);
+    }
+
+    public Stream<IndexedRawParams> stream(String text) {
+        return super.stream(text)
+                .filter((component) -> component instanceof IndexedRawParams)
+                .map(IndexedRawParams.class::cast);
     }
 
     @Override
