@@ -1,0 +1,40 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.gradleup.shadow' version '9.3.1'
+}
+
+
+publishing {
+    publications {
+        mavenLocal(MavenPublication) {
+            from components.java
+            artifactId = 'formatter'
+
+            groupId = 'me.tr'
+            version = '3.1.0'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation('org.junit.jupiter:junit-jupiter:5.10.0')
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+}
+
+shadowJar {
+    archiveClassifier.set('')
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        showStandardStreams = true
+        events "STARTED", "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+    }
+}
