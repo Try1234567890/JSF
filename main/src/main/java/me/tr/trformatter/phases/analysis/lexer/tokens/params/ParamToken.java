@@ -1,12 +1,11 @@
 package me.tr.trformatter.phases.analysis.lexer.tokens.params;
 
+import me.tr.trformatter.phases.analysis.exceptions.ComponentNotFound;
 import me.tr.trformatter.phases.analysis.lexer.tokens.Token;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.types.ParamType;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.types.StringType;
 import me.tr.trformatter.registries.ParamsTypeRegistry;
 import me.tr.trformatter.utility.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.Set;
@@ -17,7 +16,6 @@ public class ParamToken implements Token {
             '&', '^', '%', '$', '#', '@', '!', '-', '+',
             '=', ';', ':', '"', '\'', ',', '.', '/', '?'
     );
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParamToken.class);
     private final String name;
     private final ParamType<?> type;
     private final Object value;
@@ -32,7 +30,7 @@ public class ParamToken implements Token {
         ParamType<?> type = ParamsTypeRegistry.get(value);
 
         if (type == null) {
-            LOGGER.warn("Type of param {} value {} is not recognized. Using string...", name, value);
+            new ComponentNotFound("Type of param " + name + " value " + value + " is not recognized. Using string...").printStackTrace(System.err);
             return new ParamToken(name, StringType.TYPE, value);
         }
 
@@ -85,7 +83,7 @@ public class ParamToken implements Token {
         StringBuilder sb = new StringBuilder();
         for (char c : name.toCharArray()) {
             if (ILLEGAL_CHARS.contains(c)) {
-                LOGGER.error("The param name \"{}\" contains illegal characters, removing it from final name...", name);
+                new IllegalArgumentException("The param name \"" + name + "\" contains illegal characters, removing them from final name...").printStackTrace(System.err);
                 continue;
             }
             sb.append(c);
@@ -94,7 +92,7 @@ public class ParamToken implements Token {
         String newName = sb.toString();
 
         if (!newName.equals(name)) {
-            LOGGER.info("The final name for param \"{}\" is \"{}\"", name, newName);
+            new IllegalArgumentException("The final name for param \"" + name + "\" is \"" + newName + "\"").printStackTrace(System.err);
         }
 
         return newName;

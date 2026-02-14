@@ -1,30 +1,55 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawConditions;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawPlaceholder;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawTag;
 import me.tr.trformatter.strings.CString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class PlaceholderScanner extends GenericScanner {
-    public static final PlaceholderScanner INSTANCE = new PlaceholderScanner();
+    /**
+     * Singleton instance for default scanning operations.
+     */
+    public static final PlaceholderScanner INSTANCE =
+            new PlaceholderScanner(CharacterSet.DEF_OPEN_PLACEHOLDER.getDelimiter(),
+                    CharacterSet.DEF_CLOSE_PLACEHOLDER.getDelimiter(), CharacterSet.DEFAULT);
 
-
-    public PlaceholderScanner(Characters chars) {
-        super(
-                chars != null ? chars.getOpenPlaceholder() : Characters.DEF_OPEN_PLACEHOLDER,
-                chars != null ? chars.getClosePlaceholder() : Characters.DEF_CLOSE_PLACEHOLDER,
-                chars);
+    /**
+     * Initializes a new GenericScanner with specified delimiters and character rules.
+     *
+     * @param openDel    The string sequence identifying the start of a component.
+     * @param closeDel   The string sequence identifying the end of a component.
+     * @param characters The configuration for special characters. If null, default characters are used.
+     * @throws NullPointerException if openDel or closeDel are null.
+     */
+    protected PlaceholderScanner(String openDel, String closeDel, CharacterSet characters) {
+        super(openDel, closeDel, characters);
     }
 
-    public PlaceholderScanner() {
-        this(new Characters());
+
+    /**
+     * Constructs a PlaceholderScanner with specific character delimiters.
+     *
+     * @param chars The character configuration to use. If null, default tags are used.
+     */
+    public static PlaceholderScanner of(CharacterSet chars) {
+        if (chars == null
+                || chars.isDefault()) {
+            return INSTANCE;
+        }
+        return new PlaceholderScanner(
+                chars.getOpenPlaceholder(),
+                chars.getClosePlaceholder(),
+                chars
+        );
+    }
+
+    public static PlaceholderScanner of() {
+        return INSTANCE;
     }
 
     /**
@@ -89,6 +114,20 @@ public class PlaceholderScanner extends GenericScanner {
         return super.findFirst(text)
                 .filter((component) -> component instanceof IndexedRawPlaceholder)
                 .map(IndexedRawPlaceholder.class::cast);
+    }
+
+    public IndexedRawPlaceholder findFirstOrNull(String text) {
+        return super.findFirst(text)
+                .filter((component) -> component instanceof IndexedRawPlaceholder)
+                .map(IndexedRawPlaceholder.class::cast)
+                .orElse(null);
+    }
+
+    public IndexedRawPlaceholder findLastOrNull(String text) {
+        return super.findFirst(text)
+                .filter((component) -> component instanceof IndexedRawPlaceholder)
+                .map(IndexedRawPlaceholder.class::cast)
+                .orElse(null);
     }
 
     public Stream<IndexedRawPlaceholder> stream(String text) {

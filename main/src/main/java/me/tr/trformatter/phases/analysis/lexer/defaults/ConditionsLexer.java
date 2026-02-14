@@ -1,10 +1,11 @@
 package me.tr.trformatter.phases.analysis.lexer.defaults;
 
+import me.tr.trformatter.phases.analysis.exceptions.ComponentNotFound;
 import me.tr.trformatter.phases.analysis.lexer.tokens.NameToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.OperatorToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.components.ConditionToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.ParamToken;
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawCondition;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawConditions;
 import me.tr.trformatter.strings.CString;
@@ -12,16 +13,22 @@ import me.tr.trformatter.strings.CString;
 import java.util.List;
 
 public class ConditionsLexer extends GenericLexer<IndexedRawConditions> {
-    public static final ConditionsLexer INSTANCE = new ConditionsLexer();
+    public static final ConditionsLexer INSTANCE = new ConditionsLexer(CharacterSet.DEFAULT);
 
-    public ConditionsLexer(Characters characters) {
+    protected ConditionsLexer(CharacterSet characters) {
         super(characters);
     }
 
-    public ConditionsLexer() {
-        super();
+    public static ConditionsLexer of(CharacterSet characters) {
+        if (characters == null || characters.isDefault()) {
+            return INSTANCE;
+        }
+        return new ConditionsLexer(characters);
     }
 
+    public static ConditionsLexer of() {
+        return INSTANCE;
+    }
 
     @Override
     public ConditionToken tokenize(IndexedRawConditions rawConditions) {
@@ -39,9 +46,14 @@ public class ConditionsLexer extends GenericLexer<IndexedRawConditions> {
 
             CString nextComponent = new CString(nextRaw.component());
             OperatorToken.Operator operator = getOperator(firstComponent, conditions.get(i - 1).end(), nextRaw.start());
-
             ConditionToken nextToken = createToken(nextComponent, nextRaw);
-            currentLeft.associate(operator, nextToken);
+
+            if (operator != null) {
+                currentLeft.associate(operator, nextToken);
+            } else {
+                new ComponentNotFound("Cannot find the condition operator in between " + currentLeft + " and " + nextToken).printStackTrace(System.err);
+            }
+
             currentLeft = nextToken;
         }
 
@@ -56,7 +68,8 @@ public class ConditionsLexer extends GenericLexer<IndexedRawConditions> {
 
     private OperatorToken.Operator getOperator(CString component, int start, int end) {
         int and = component.indexOfIgnoringStrings(characters().getAndCondition(), start, end);
+        int or = component.indexOfIgnoringStrings(characters().getOrCondition(), start, end);
 
-        return and != -1 ? OperatorToken.Operator.AND : OperatorToken.Operator.OR;
+        return and != -1 ? OperatorToken.Operator.AND : (or != -1 ? OperatorToken.Operator.OR : null);
     }
 }

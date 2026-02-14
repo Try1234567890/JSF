@@ -1,6 +1,6 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawCondition;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
 
@@ -9,18 +9,45 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ConditionScanner extends GenericScanner {
-    public static final ConditionScanner INSTANCE = new ConditionScanner();
+    /**
+     * Singleton instance for default scanning operations.
+     */
+    public static final ConditionScanner INSTANCE =
+            new ConditionScanner(CharacterSet.DEF_OPEN_CONDITION.getDelimiter(),
+                    CharacterSet.DEF_CLOSE_CONDITION.getDelimiter(), CharacterSet.DEFAULT);
 
-    public ConditionScanner(Characters chars) {
-        super(
-                chars != null ? chars.getOpenCondition() : Characters.DEF_OPEN_CONDITION,
-                chars != null ? chars.getCloseCondition() : Characters.DEF_CLOSE_CONDITION,
+    /**
+     * Initializes a new GenericScanner with specified delimiters and character rules.
+     *
+     * @param openDel    The string sequence identifying the start of a component.
+     * @param closeDel   The string sequence identifying the end of a component.
+     * @param characters The configuration for special characters. If null, default characters are used.
+     * @throws NullPointerException if openDel or closeDel are null.
+     */
+    protected ConditionScanner(String openDel, String closeDel, CharacterSet characters) {
+        super(openDel, closeDel, characters);
+    }
+
+
+    /**
+     * Constructs a ConditionScanner with specific character delimiters.
+     *
+     * @param chars The character configuration to use. If null, default tags are used.
+     */
+    public static ConditionScanner of(CharacterSet chars) {
+        if (chars == null
+                || chars.isDefault()) {
+            return INSTANCE;
+        }
+        return new ConditionScanner(
+                chars.getOpenCondition(),
+                chars.getCloseCondition(),
                 chars
         );
     }
 
-    public ConditionScanner() {
-        this(new Characters());
+    public static ConditionScanner of() {
+        return INSTANCE;
     }
     
     /**

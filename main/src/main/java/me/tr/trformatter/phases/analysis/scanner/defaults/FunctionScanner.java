@@ -1,6 +1,6 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawFunction;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawFunctions;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
@@ -11,20 +11,46 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class FunctionScanner extends GenericScanner {
-    public static final FunctionScanner INSTANCE = new FunctionScanner();
+     /**
+     * Singleton instance for default scanning operations.
+     */
+    public static final FunctionScanner INSTANCE =
+            new FunctionScanner(CharacterSet.DEF_OPEN_FUNCTION.getDelimiter(),
+                    CharacterSet.DEF_CLOSE_FUNCTION.getDelimiter(), CharacterSet.DEFAULT);
 
-
-    public FunctionScanner(Characters chars) {
-        super(
-                chars != null ? chars.getOpenFunction() : Characters.DEF_CLOSE_FUNCTION,
-                chars != null ? chars.getCloseFunction() : Characters.DEF_CLOSE_FUNCTION,
-                chars);
+    /**
+     * Initializes a new GenericScanner with specified delimiters and character rules.
+     *
+     * @param openDel    The string sequence identifying the start of a component.
+     * @param closeDel   The string sequence identifying the end of a component.
+     * @param characters The configuration for special characters. If null, default characters are used.
+     * @throws NullPointerException if openDel or closeDel are null.
+     */
+    protected FunctionScanner(String openDel, String closeDel, CharacterSet characters) {
+        super(openDel, closeDel, characters);
     }
 
-    public FunctionScanner() {
-        this(new Characters());
+
+    /**
+     * Constructs a FunctionScanner with specific character delimiters.
+     *
+     * @param chars The character configuration to use. If null, default tags are used.
+     */
+    public static FunctionScanner of(CharacterSet chars) {
+        if (chars == null
+                || chars.isDefault()) {
+            return INSTANCE;
+        }
+        return new FunctionScanner(
+                chars.getOpenFunction(),
+                chars.getCloseFunction(),
+                chars
+        );
     }
 
+    public static FunctionScanner of() {
+        return INSTANCE;
+    }
 
     /**
      * Scans the text and returns a list specifically of {@link IndexedRawFunction}.

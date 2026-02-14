@@ -1,6 +1,6 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParam;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
 import me.tr.trformatter.strings.CString;
@@ -12,25 +12,46 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ParamsScanner extends GenericScanner {
-    public static final ParamsScanner INSTANCE = new ParamsScanner();
+    /**
+     * Singleton instance for default scanning operations.
+     */
+    public static final ParamsScanner INSTANCE =
+            new ParamsScanner(CharacterSet.DEF_OPEN_PARAMS.getDelimiter(),
+                    CharacterSet.DEF_CLOSE_PARAMS.getDelimiter(), CharacterSet.DEFAULT);
 
-    private static String OPEN_DEL(Characters chars) {
-        return chars != null ? chars.getOpenParams() : Characters.DEF_OPEN_PARAMS;
+    /**
+     * Initializes a new GenericScanner with specified delimiters and character rules.
+     *
+     * @param openDel    The string sequence identifying the start of a component.
+     * @param closeDel   The string sequence identifying the end of a component.
+     * @param characters The configuration for special characters. If null, default characters are used.
+     * @throws NullPointerException if openDel or closeDel are null.
+     */
+    protected ParamsScanner(String openDel, String closeDel, CharacterSet characters) {
+        super(openDel, closeDel, characters);
     }
 
-    private static String CLOSE_DEL(Characters chars) {
-        return chars != null ? chars.getCloseParams() : Characters.DEF_CLOSE_PARAMS;
+
+    /**
+     * Constructs a ParamsScanner with specific character delimiters.
+     *
+     * @param chars The character configuration to use. If null, default tags are used.
+     */
+    public static ParamsScanner of(CharacterSet chars) {
+        if (chars == null
+                || chars.isDefault()) {
+            return INSTANCE;
+        }
+        return new ParamsScanner(
+                chars.getOpenParams(),
+                chars.getCloseParams(),
+                chars
+        );
     }
 
-
-    public ParamsScanner(Characters chars) {
-        super(OPEN_DEL(chars), CLOSE_DEL(chars), chars);
+    public static ParamsScanner of() {
+        return INSTANCE;
     }
-
-    public ParamsScanner() {
-        this(new Characters());
-    }
-
 
     /**
      * Scans the text and returns a list specifically of {@link IndexedRawParams}.

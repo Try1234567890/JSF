@@ -1,6 +1,6 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawFunctions;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawParams;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawTag;
@@ -21,7 +21,21 @@ public class TagScanner extends GenericScanner {
     /**
      * Singleton instance for default scanning operations.
      */
-    public static final TagScanner INSTANCE = new TagScanner();
+    public static final TagScanner INSTANCE =
+            new TagScanner(CharacterSet.DEF_OPEN_TAG.getDelimiter(),
+                    CharacterSet.DEF_CLOSE_TAG.getDelimiter(), CharacterSet.DEFAULT);
+
+    /**
+     * Initializes a new GenericScanner with specified delimiters and character rules.
+     *
+     * @param openDel    The string sequence identifying the start of a component.
+     * @param closeDel   The string sequence identifying the end of a component.
+     * @param characters The configuration for special characters. If null, default characters are used.
+     * @throws NullPointerException if openDel or closeDel are null.
+     */
+    protected TagScanner(String openDel, String closeDel, CharacterSet characters) {
+        super(openDel, closeDel, characters);
+    }
 
 
     /**
@@ -29,20 +43,22 @@ public class TagScanner extends GenericScanner {
      *
      * @param chars The character configuration to use. If null, default tags are used.
      */
-    public TagScanner(Characters chars) {
-        super(
-                chars != null ? chars.getOpenTag() : Characters.DEF_OPEN_TAG,
-                chars != null ? chars.getCloseTag() : Characters.DEF_CLOSE_TAG,
+    public static TagScanner of(CharacterSet chars) {
+        if (chars == null
+                || chars.isDefault()) {
+            return INSTANCE;
+        }
+        return new TagScanner(
+                chars.getOpenTag(),
+                chars.getCloseTag(),
                 chars
         );
     }
 
-    /**
-     * Constructs a TagScanner with default system characters.
-     */
-    public TagScanner() {
-        this(new Characters());
+    public static TagScanner of() {
+        return INSTANCE;
     }
+
 
     /**
      * Scans the text and returns a list specifically of {@link IndexedRawTag}.

@@ -4,28 +4,38 @@ import me.tr.trformatter.phases.analysis.lexer.tokens.NameToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.components.FunctionToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.components.TagToken;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.ParamToken;
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawTag;
 import me.tr.trformatter.strings.CString;
 import me.tr.trformatter.utility.Validator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TagLexer extends GenericLexer<IndexedRawTag> {
-    public static final TagLexer INSTANCE = new TagLexer();
+    public static final TagLexer INSTANCE = new TagLexer(CharacterSet.DEFAULT);
 
-    public TagLexer(Characters characters) {
+    protected TagLexer(CharacterSet characters) {
         super(characters);
     }
 
-    public TagLexer() {
-        super();
+    public static TagLexer of(CharacterSet characters) {
+        if (characters == null || characters.isDefault()) {
+            return INSTANCE;
+        }
+        return new TagLexer(characters);
+    }
+
+    public static TagLexer of() {
+        return INSTANCE;
     }
 
     @Override
     public TagToken tokenize(IndexedRawTag rawComponent) {
+
         if (Validator.isNull(rawComponent)) {
-            throw new NullPointerException("The provided raw component is null.");
+            new NullPointerException("The provided raw tag is null.").printStackTrace(System.err);
+            return null;
         }
 
         NameToken name = getName(new CString(rawComponent.component()));
@@ -35,6 +45,21 @@ public class TagLexer extends GenericLexer<IndexedRawTag> {
             List<FunctionToken> functions = FunctionsLexer.INSTANCE.tokenize(rawComponent.functions());
             return new TagToken(name, params, functions);
         }
+
         return new TagToken(name, params);
+    }
+
+    public List<TagToken> tokenize(List<IndexedRawTag> rawComponents) {
+        List<TagToken> tokens = new ArrayList<>();
+
+        for (IndexedRawTag rawComponent : rawComponents) {
+            TagToken token = tokenize(rawComponent);
+
+            if (token == null) continue;
+
+            tokens.add(token);
+        }
+
+        return tokens;
     }
 }

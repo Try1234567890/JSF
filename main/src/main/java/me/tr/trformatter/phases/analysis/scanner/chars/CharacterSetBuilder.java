@@ -1,6 +1,6 @@
 package me.tr.trformatter.phases.analysis.scanner.chars;
 
-public class CharactersBuilder {
+public class CharacterSetBuilder {
     private String openPlaceholder;
     private String closePlaceholder;
     private String openTag;
@@ -18,87 +18,93 @@ public class CharactersBuilder {
     private String splitParams;
     private String associateParams;
 
-    public CharactersBuilder setOpenTag(String openTag) {
+    public CharacterSetBuilder setOpenTag(String openTag) {
         this.openTag = openTag;
         return this;
     }
 
-    public CharactersBuilder setOpenPlaceholder(String openPlaceholder) {
+    public CharacterSetBuilder setOpenPlaceholder(String openPlaceholder) {
         this.openPlaceholder = openPlaceholder;
         return this;
     }
 
-    public CharactersBuilder setClosePlaceholder(String closePlaceholder) {
+    public CharacterSetBuilder setClosePlaceholder(String closePlaceholder) {
         this.closePlaceholder = closePlaceholder;
         return this;
     }
 
-    public CharactersBuilder setCloseTag(String closeTag) {
+    public CharacterSetBuilder setCloseTag(String closeTag) {
         this.closeTag = closeTag;
         return this;
     }
 
-    public CharactersBuilder setOpenCondition(String openCondition) {
+    public CharacterSetBuilder setOpenCondition(String openCondition) {
         this.openCondition = openCondition;
         return this;
     }
 
-    public CharactersBuilder setCloseCondition(String closeCondition) {
+    public CharacterSetBuilder setCloseCondition(String closeCondition) {
         this.closeCondition = closeCondition;
         return this;
     }
 
-    public CharactersBuilder setOrCondition(String orCondition) {
+    public CharacterSetBuilder setOrCondition(String orCondition) {
         this.orCondition = orCondition;
         return this;
     }
 
-    public CharactersBuilder setAndCondition(String andCondition) {
+    public CharacterSetBuilder setAndCondition(String andCondition) {
         this.andCondition = andCondition;
         return this;
     }
 
-    public CharactersBuilder setSeparateConditions(String separateConditions) {
+    public CharacterSetBuilder setSeparateConditions(String separateConditions) {
         this.separateConditions = separateConditions;
         return this;
     }
 
-    public CharactersBuilder setOpenFunction(String openFunction) {
+    public CharacterSetBuilder setOpenFunction(String openFunction) {
         this.openFunction = openFunction;
         return this;
     }
 
-    public CharactersBuilder setCloseFunction(String closeFunction) {
+    public CharacterSetBuilder setCloseFunction(String closeFunction) {
         this.closeFunction = closeFunction;
         return this;
     }
 
-    public CharactersBuilder setSeparateFunction(String separateFunction) {
+    public CharacterSetBuilder setSeparateFunction(String separateFunction) {
         this.separateFunction = separateFunction;
         return this;
     }
 
-    public CharactersBuilder setOpenParams(String openParams) {
+    public CharacterSetBuilder setOpenParams(String openParams) {
         this.openParams = openParams;
         return this;
     }
 
-    public CharactersBuilder setCloseParams(String closeParams) {
+    public CharacterSetBuilder setCloseParams(String closeParams) {
         this.closeParams = closeParams;
         return this;
     }
 
-    public CharactersBuilder setSplitParams(String splitParams) {
+    public CharacterSetBuilder setSplitParams(String splitParams) {
         this.splitParams = splitParams;
         return this;
     }
 
-    public CharactersBuilder setAssociateParams(String associateParams) {
+    public CharacterSetBuilder setAssociateParams(String associateParams) {
         this.associateParams = associateParams;
         return this;
     }
 
-    public Characters build() {
-        return new Characters(openPlaceholder, closePlaceholder, openTag, closeTag, openCondition, closeCondition, orCondition, andCondition, separateConditions, openFunction, closeFunction, separateFunction, openParams, closeParams, splitParams, associateParams);
+    public CharacterSet build() {
+        return new CharacterSet(
+                openPlaceholder, closePlaceholder, openTag,
+                closeTag, openCondition, closeCondition,
+                orCondition, andCondition, separateConditions,
+                openFunction, closeFunction, separateFunction,
+                openParams, closeParams, splitParams, associateParams
+        );
     }
 }

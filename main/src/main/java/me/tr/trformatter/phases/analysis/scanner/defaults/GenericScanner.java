@@ -1,7 +1,7 @@
 package me.tr.trformatter.phases.analysis.scanner.defaults;
 
 import me.tr.trformatter.phases.analysis.scanner.Scanner;
-import me.tr.trformatter.phases.analysis.scanner.chars.Characters;
+import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.phases.analysis.scanner.components.IndexedRawComponent;
 import me.tr.trformatter.strings.CString;
 import me.tr.trformatter.utility.Validator;
@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class GenericScanner implements Scanner {
     private final String openDel;
     private final String closeDel;
-    private final Characters characters;
+    private final CharacterSet characters;
 
     /**
      * Initializes a new GenericScanner with specified delimiters and character rules.
@@ -29,20 +29,20 @@ public abstract class GenericScanner implements Scanner {
      * @param characters The configuration for special characters. If null, default characters are used.
      * @throws NullPointerException if openDel or closeDel are null.
      */
-    public GenericScanner(String openDel, String closeDel, Characters characters) {
+    protected GenericScanner(String openDel, String closeDel, CharacterSet characters) {
         Validator.isNull(openDel, "Open delimiter cannot be null");
         Validator.isNull(closeDel, "Close delimiter cannot be null");
         this.openDel = openDel;
         this.closeDel = closeDel;
-        this.characters = characters == null ? new Characters() : characters;
+        this.characters = characters == null ? CharacterSet.DEFAULT : characters;
     }
 
     /**
      * Returns the character configuration used by this scanner.
      *
-     * @return The {@link Characters} instance containing separator and delimiter rules.
+     * @return The {@link CharacterSet} instance containing separator and delimiter rules.
      */
-    public Characters characters() {
+    public CharacterSet characters() {
         return characters;
     }
 
@@ -85,7 +85,7 @@ public abstract class GenericScanner implements Scanner {
      */
     @Override
     public List<? extends IndexedRawComponent> scan(String text, int from, int end, int depth) {
-        if (text == null || text.isEmpty()) return new ArrayList<>();
+        if (Validator.isNull(text)) return new ArrayList<>();
 
         List<IndexedRawComponent> components = new ArrayList<>();
         int currentPos = Math.max(0, from);
