@@ -1,7 +1,7 @@
 package me.tr.trformatter.defaults.conditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import me.tr.trformatter.phases.analysis.exceptions.ComponentNotFound;
 
 import java.util.Set;
 
@@ -14,7 +14,6 @@ public enum Comparator {
     EQUALS("==", "equals"),
     NOT_EQUALS("!=", "not_equals");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Comparator.class);
     private final Set<String> operators;
 
     Comparator(String... operators) {
@@ -27,7 +26,7 @@ public enum Comparator {
 
     public static Comparator parse(String str) {
         if (str == null) {
-            LOGGER.warn("The comparator is null. Using \"EQUALS\"");
+            new ComponentNotFound("The comparator is null. Using \"EQUALS\"").printStackTrace(System.err);
             return EQUALS;
         }
 
@@ -38,7 +37,7 @@ public enum Comparator {
             }
         }
 
-        LOGGER.warn("The comparator {} is not recognized. Using \"EQUALS\"", str);
+        new ComponentNotFound("The comparator " + str + " is not recognized. Using \"EQUALS\"").printStackTrace(System.err);
         return EQUALS;
     }
 }

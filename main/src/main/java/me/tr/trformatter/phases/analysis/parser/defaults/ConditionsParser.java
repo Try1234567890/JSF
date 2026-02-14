@@ -20,7 +20,10 @@ public class ConditionsParser implements Parser<ConditionToken> {
         Optional<Condition> conditionOpt = Condition.getCondition(token.getName().getName());
 
         return conditionOpt.map(value -> new EvalCondition(value, token.params()))
-                .orElse(null);
+                .orElseGet(() -> {
+                    ComponentNotFound.condition(token.getName().getName()).printStackTrace(System.err);
+                    return null;
+                });
     }
 
     public List<EvalCondition> parseAll(ConditionToken token) {
@@ -37,9 +40,6 @@ public class ConditionsParser implements Parser<ConditionToken> {
                     eval.setOperator(current.getOperator().getOperator());
                 }
                 evalList.add(eval);
-            } else {
-                ComponentNotFound.condition(token.getName().getName())
-                        .printStackTrace(System.err);
             }
 
             current = current.getRight();

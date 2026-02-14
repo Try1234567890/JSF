@@ -19,7 +19,11 @@ public class FunctionParser implements Parser<FunctionToken> {
 
         Optional<Function> funOpt = Function.getFunction(token.getName().getName());
 
-        return funOpt.map(value -> new EvalFunction(value, token.params())).orElse(null);
+        return funOpt.map(value -> new EvalFunction(value, token.params()))
+                .orElseGet(() -> {
+                    ComponentNotFound.function(token.getName().getName()).printStackTrace(System.err);
+                    return null;
+                });
     }
 
     public List<EvalFunction> parseAll(List<FunctionToken> list) {
@@ -28,10 +32,8 @@ public class FunctionParser implements Parser<FunctionToken> {
         for (FunctionToken token : list) {
             EvalFunction function = parse(token);
 
-            if (function == null) {
-                ComponentNotFound.function(token.getName().getName()).printStackTrace(System.err);
-                continue;
-            }
+            if (function == null) continue;
+
 
             components.add(function);
         }

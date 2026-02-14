@@ -1,8 +1,6 @@
 package me.tr.trformatter.defaults.tags.readfile;
 
 import me.tr.trformatter.utility.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,9 +8,9 @@ import java.nio.file.Files;
 import java.util.Optional;
 
 public class FileReader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileReader.class);
 
-    private FileReader() {}
+    private FileReader() {
+    }
 
     public static String read(File file) {
         Validator.isNull(file, "The file is null");
@@ -63,23 +61,23 @@ public class FileReader {
 
         try {
             if (Validator.isNull(file) || !file.exists()) {
-                LOGGER.error("The provided path does not exist or is null: {}", path);
+                new IOException("The provided path does not exist or is null: " + path).printStackTrace(System.err);
                 return "";
             }
 
             if (file.isDirectory()) {
-                LOGGER.error("Expected a file, but found a directory: {}", path);
+                new IOException("Expected a file, but found a directory: " + path).printStackTrace(System.err);
                 return "";
             }
 
             if (!file.canRead()) {
-                LOGGER.error("File is not readable (no read permissions): {}", path);
+                new IOException("File is not readable (no read permissions): " + path).printStackTrace(System.err);
                 return "";
             }
 
             return Files.readString(file.toPath());
         } catch (IOException e) {
-            LOGGER.error("Error while reading file: {}", path, e);
+            e.printStackTrace(System.err);
             return "";
         }
 

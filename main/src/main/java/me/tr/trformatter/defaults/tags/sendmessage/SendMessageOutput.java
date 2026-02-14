@@ -1,8 +1,5 @@
 package me.tr.trformatter.defaults.tags.sendmessage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.net.*;
 import java.util.function.Function;
@@ -66,7 +63,6 @@ public enum SendMessageOutput {
         return file;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageOutput.class);
     private final Function<String, OutputStream> function;
 
     SendMessageOutput(Function<String, OutputStream> function) {
@@ -75,7 +71,7 @@ public enum SendMessageOutput {
 
     public static SendMessageOutput parse(String str) {
         if (str == null) {
-            LOGGER.warn("The send message output is null. Using \"SOUT\"");
+            new NullPointerException("The send message output is null. Using \"SOUT\"").printStackTrace(System.err);
             return SOUT;
         }
 
@@ -89,7 +85,7 @@ public enum SendMessageOutput {
                 return output;
             }
         }
-        LOGGER.warn("The send message output {} is not recognized. Using \"SOUT\"", str);
+        new NullPointerException("The send message output "+str+" is not recognized. Using \"SOUT\"").printStackTrace(System.err);
         return SOUT;
     }
 

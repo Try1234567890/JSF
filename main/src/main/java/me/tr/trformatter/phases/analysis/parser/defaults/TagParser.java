@@ -20,7 +20,10 @@ public class TagParser implements Parser<TagToken> {
 
         return tagOpt.map(value -> new EvalTag(value,
                         FunctionParser.INSTANCE.parseAll(token.getFunctions()), token.params()))
-                .orElse(null);
+                .orElseGet(() -> {
+                    ComponentNotFound.tag(token.getName().getName()).printStackTrace(System.err);
+                    return null;
+                });
     }
 
     public List<EvalTag> parseAll(List<TagToken> list) {
@@ -29,10 +32,8 @@ public class TagParser implements Parser<TagToken> {
         for (TagToken token : list) {
             EvalTag tag = parse(token);
 
-            if (tag == null) {
-                ComponentNotFound.tag(token.getName().getName()).printStackTrace(System.err);
-                continue;
-            }
+            if (tag == null) continue;
+
 
             components.add(tag);
         }

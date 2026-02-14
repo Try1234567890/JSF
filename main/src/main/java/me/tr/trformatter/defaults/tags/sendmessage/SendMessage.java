@@ -3,16 +3,12 @@ package me.tr.trformatter.defaults.tags.sendmessage;
 import me.tr.trformatter.components.Tag;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.manager.ParamsContainer;
 import me.tr.trformatter.uids.UID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
 
 public class SendMessage extends Tag {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendMessage.class);
 
     public SendMessage() {
         super(new UID("send_message"));
@@ -31,7 +27,7 @@ public class SendMessage extends Tag {
             out.write(getByteArray(msg));
             out.flush();
         } catch (IOException e) {
-            LOGGER.error("An error occurs while writing {} to output stream", msg, e);
+            e.printStackTrace(System.err);
         }
         return "";
     }
@@ -44,7 +40,7 @@ public class SendMessage extends Tag {
     private String getMessage(ParamsContainer params) {
         Optional<String> msg = params.getAs("message", String.class);
         if (msg.isEmpty()) {
-            LOGGER.warn("The message is null for send message, using an empty string.");
+            new NullPointerException("The message is null for send message, using an empty string.").printStackTrace(System.err);
             return "";
         }
         return msg.get();
