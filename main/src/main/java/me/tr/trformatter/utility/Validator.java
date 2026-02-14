@@ -2,6 +2,7 @@ package me.tr.trformatter.utility;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Supplier;
 
 public class Validator {
 
@@ -61,7 +62,15 @@ public class Validator {
     }
 
 
-    public static <T> T notNullOr(T obj, T def) {
-        return obj == null ? def : obj;
+    /**
+     * Returns the provided object if it is not null, otherwise returns the default value.
+     *
+     * @param <T> the type of the element
+     * @param obj the object to check
+     * @param def the default value to return if {@code obj} is null
+     * @return {@code obj} if it is non-null, otherwise {@code def}
+     */
+    public static <T> T orElse(T obj, T def) {
+        return (obj == null) ? def : obj;
     }
 }
