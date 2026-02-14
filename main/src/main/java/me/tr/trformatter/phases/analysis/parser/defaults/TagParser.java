@@ -1,6 +1,7 @@
 package me.tr.trformatter.phases.analysis.parser.defaults;
 
 import me.tr.trformatter.components.Tag;
+import me.tr.trformatter.phases.analysis.exceptions.ComponentNotFound;
 import me.tr.trformatter.phases.analysis.lexer.tokens.components.TagToken;
 import me.tr.trformatter.phases.analysis.parser.Parser;
 import me.tr.trformatter.phases.evaluation.components.EvalTag;
@@ -14,16 +15,26 @@ public class TagParser implements Parser<TagToken> {
 
     @Override
     public EvalTag parse(TagToken token) {
+        if (token == null) return null;
         Optional<Tag> tagOpt = Tag.getTag(token.getName().getName());
 
-        return tagOpt.map(value -> new EvalTag(value, FunctionParser.INSTANCE.parse(token.getFunctions()), token.params())).orElse(null);
+        return tagOpt.map(value -> new EvalTag(value,
+                        FunctionParser.INSTANCE.parseAll(token.getFunctions()), token.params()))
+                .orElse(null);
     }
 
-    public List<EvalTag> parse(List<TagToken> list) {
+    public List<EvalTag> parseAll(List<TagToken> list) {
         List<EvalTag> components = new ArrayList<>();
 
         for (TagToken token : list) {
-            components.add(parse(token));
+            EvalTag tag = parse(token);
+
+            if (tag == null) {
+                ComponentNotFound.tag(token.getName().getName()).printStackTrace(System.err);
+                continue;
+            }
+
+            components.add(tag);
         }
 
         return components;

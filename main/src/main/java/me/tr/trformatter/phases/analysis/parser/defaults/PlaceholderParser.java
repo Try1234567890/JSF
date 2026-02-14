@@ -1,5 +1,6 @@
 package me.tr.trformatter.phases.analysis.parser.defaults;
 
+import me.tr.trformatter.phases.analysis.exceptions.ComponentNotFound;
 import me.tr.trformatter.phases.analysis.lexer.tokens.components.PlaceholderToken;
 import me.tr.trformatter.phases.analysis.parser.Parser;
 import me.tr.trformatter.phases.evaluation.components.EvalCondition;
@@ -14,21 +15,27 @@ public class PlaceholderParser implements Parser<PlaceholderToken> {
 
     @Override
     public EvalPlaceholder parse(PlaceholderToken token) {
-        EvalTag tag = new TagParser().parse(token.getTag());
-        List<EvalCondition> conditions = new ConditionsParser().parseAll(token.getConditions());
+        EvalTag tag = TagParser.INSTANCE.parse(token.getTag());
 
         if (tag == null) {
-            throw new NullPointerException("The tag with ID: " + token.getTag().getName().getName() + " is not found. Make sure you have registered it.");
+            return null;
         }
+
+        List<EvalCondition> conditions = ConditionsParser.INSTANCE.parseAll(token.getConditions());
 
         return new EvalPlaceholder(tag, conditions, token.start(), token.end());
     }
 
-    public List<EvalPlaceholder> parse(List<PlaceholderToken> list) {
+    public List<EvalPlaceholder> parseAll(List<PlaceholderToken> list) {
         List<EvalPlaceholder> components = new ArrayList<>();
 
         for (PlaceholderToken token : list) {
-            components.add(parse(token));
+            EvalPlaceholder placeholder = parse(token);
+
+            // Already logged any error
+            if (placeholder == null) continue;
+
+            components.add(placeholder);
         }
 
         return components;
