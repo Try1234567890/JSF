@@ -63,11 +63,11 @@ public class ANSI24Bit implements ANSI {
 
     @Override
     public String getTextEscapeSequence() {
-        return "ESC[38;2;" + getR() + ";" + getG() + ";" + getB() + "m";
+        return "\u001B[38;2;" + getR() + ";" + getG() + ";" + getB() + "m";
     }
 
     @Override
     public String getBackgroundEscapeSequence() {
-        return "ESC[48;2;" + getR() + ";" + getG() + ";" + getB() + "m";
+        return "\u001B[48;2;" + getR() + ";" + getG() + ";" + getB() + "m";
     }
 }
