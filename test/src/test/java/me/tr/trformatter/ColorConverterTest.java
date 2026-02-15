@@ -1,4 +1,4 @@
-package trformatter;
+package me.tr.trformatter;
 
 
 import me.tr.trformatter.strings.color.converter.*;

@@ -1,10 +1,8 @@
-package trformatter;
+package me.tr.trformatter;
 
 import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.strings.CString;
 import me.tr.trformatter.strings.cases.*;
-import me.tr.trformatter.strings.color.ansi.ANSI4Bit;
-import me.tr.trformatter.strings.color.converter.ColorConverter;
 import org.junit.jupiter.api.Test;
 
 public class FormatterTest {
