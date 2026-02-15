@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Registry<K, V> {
-    private final Map<K, V> map = new HashMap<>();
+    private final Map<K, V> registry = new HashMap<>();
 
     protected Map<K, V> getRegistry() {
-        return map;
+        return registry;
     }
 
     public V retrieve(K key) {

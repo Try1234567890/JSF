@@ -2,20 +2,18 @@ package me.tr.trformatter.registries;
 
 import me.tr.trformatter.components.Tag;
 import me.tr.trformatter.defaults.tags.CurrentDir;
+import me.tr.trformatter.defaults.tags.SystemEnv;
 import me.tr.trformatter.defaults.tags.UserHome;
 import me.tr.trformatter.defaults.tags.readfile.ReadFile;
 import me.tr.trformatter.defaults.tags.sendmessage.SendMessage;
-import me.tr.trformatter.defaults.tags.SystemEnv;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 public class TagsRegistry extends Registry<UID, Tag> {
     private static TagsRegistry instance;
-    private final Map<UID, Tag> tags = new HashMap<>();
 
     private TagsRegistry() {
         register(new SendMessage());
@@ -49,8 +47,7 @@ public class TagsRegistry extends Registry<UID, Tag> {
     }
 
     public Tag retrieve(String key) {
-
-        for (Map.Entry<UID, Tag> entry : tags.entrySet()) {
+        for (Map.Entry<UID, Tag> entry : getRegistry().entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
                     || Arrays.asList(uid.getAliases()).contains(key)) {
@@ -59,10 +56,5 @@ public class TagsRegistry extends Registry<UID, Tag> {
         }
 
         return null;
-    }
-
-    @Override
-    protected Map<UID, Tag> getRegistry() {
-        return tags;
     }
 }
