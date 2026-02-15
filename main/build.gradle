@@ -21,6 +21,12 @@ repositories {
     mavenCentral()
 }
 
+java {
+    withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 shadowJar {
     archiveClassifier.set('')
