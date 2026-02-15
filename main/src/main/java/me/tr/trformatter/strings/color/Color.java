@@ -75,6 +75,32 @@ public class Color {
         return hexadecimal;
     }
 
+    /**
+     * Retrieve the hex color ({@code #AARRGGBB}) following
+     * the provided pattern.
+     * <p>
+     * Channel tags are:
+     * <ol>
+     *     <li>Alpha: {@code AA}</li>
+     *     <li>Red: {@code RR}</li>
+     *     <li>Green: {@code GG}</li>
+     *     <li>Blue: {@code BB}</li>
+     * </ol>
+     * So to retrieve hex as {@code #AARRGGBB} pattern is: {@code AARRGGBB}
+     *
+     * @param pattern The pattern to follow to format the hex color.
+     * @return The formatted hex color.
+     */
+    public String getHex(String pattern) {
+        String hex = getHexadecimal();
+
+        return pattern
+                .replace("AA", hex.substring(0, 2))
+                .replace("RR", hex.substring(2, 4))
+                .replace("GG", hex.substring(4, 6))
+                .replace("BB", hex.substring(6, 8));
+    }
+
     public int getDecimal() {
         return decimal;
     }
