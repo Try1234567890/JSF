@@ -1,4 +1,4 @@
-package me.tr.trformatter;
+package trformatter;
 
 import me.tr.trformatter.phases.analysis.scanner.chars.CharacterSet;
 import me.tr.trformatter.strings.CString;
@@ -24,7 +24,7 @@ public class FormatterTest {
     }
 
     @Test
-    public void testIdDefaultChars() {
+    public void testIsDefaultChars() {
         System.out.println("Yes: " + CharacterSet.DEFAULT.isDefault());
         System.out.println("No: " + new CharacterSet(
                 "{{",        // openPlaceholder
@@ -48,7 +48,7 @@ public class FormatterTest {
 
     @Test
     public void testCustomChars() {
-        String text = "TESTONEENENENE {{<%user_home()%>}}";
+        String text = "ssawedbnuhioj {{<%user_home()%>}}";
 
 
         System.out.println(

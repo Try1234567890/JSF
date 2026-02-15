@@ -1,4 +1,4 @@
-package me.tr.trformatter;
+package trformatter;
 
 
 import me.tr.trformatter.strings.color.converter.*;
@@ -15,11 +15,9 @@ public class ColorConverterTest {
         HexConverter converter = ColorConverter.getHexConverter();
         String hex = "#FF5733";
 
-        // Test toARGB
         int[] argb = converter.toARGBOrThrown(hex);
         assertArrayEquals(new int[]{255, 255, 87, 51}, argb);
 
-        // Test fromARGB
         Optional<String> backToHex = converter.fromARGB(new int[]{255, 255, 87, 51});
         assertTrue(backToHex.isPresent());
         assertEquals("FFFF5733", backToHex.get());
@@ -29,12 +27,10 @@ public class ColorConverterTest {
     public void testDecimalConverter() {
         DecimalConverter converter = ColorConverter.getDecimalConverter();
 
-        // Test Nero (-16777216 è 0xFF000000)
         int blackDecimal = -16777216;
         int[] argb = converter.toARGBOrThrown(blackDecimal);
         assertArrayEquals(new int[]{255, 0, 0, 0}, argb);
 
-        // Test toDecimal
         int decimal = converter.fromARGB(new int[]{255, 255, 255, 255}).get();
         assertEquals(-1, decimal);
     }
@@ -56,7 +52,6 @@ public class ColorConverterTest {
         ARGBConverter converter = ColorConverter.getARGBConverter();
         int[] argbInput = new int[]{255, 10, 20, 30};
 
-        // Test pass-through
         assertArrayEquals(argbInput, converter.toARGBOrThrown(argbInput));
         assertArrayEquals(argbInput, converter.fromARGB(argbInput).get());
     }
@@ -68,7 +63,6 @@ public class ColorConverterTest {
         Integer decimal = hexConv.toDecimalOrThrown("#FFFFFF");
         assertEquals(-1, decimal);
 
-        // Da Hex a RGB array
         int[] rgb = hexConv.toRGBOrThrown("#FF0000");
         assertArrayEquals(new int[]{255, 0, 0}, rgb);
     }

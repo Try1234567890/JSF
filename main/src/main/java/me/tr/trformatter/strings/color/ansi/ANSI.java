@@ -4,6 +4,8 @@ import me.tr.trformatter.strings.color.converter.ColorConverter;
 
 public interface ANSI {
 
+    String RESET_TAG = "\u001B[0m";
+
     String getName();
 
     int getCode();
