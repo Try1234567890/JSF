@@ -8,11 +8,11 @@ plugins {
 publishing {
     publications {
         mavenLocal(MavenPublication) {
-            from components.java
+            from components.shadow
             artifactId = 'formatter'
 
             groupId = 'me.tr'
-            version = '3.2.0'
+            version = '3.2.1'
         }
     }
 }
@@ -21,20 +21,7 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation('org.junit.jupiter:junit-jupiter:5.10.0')
-    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
-}
 
 shadowJar {
     archiveClassifier.set('')
-}
-
-test {
-    useJUnitPlatform()
-
-    testLogging {
-        showStandardStreams = true
-        events "STARTED", "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
-    }
 }
