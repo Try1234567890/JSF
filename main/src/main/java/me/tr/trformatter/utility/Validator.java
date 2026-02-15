@@ -53,12 +53,12 @@ public class Validator {
      * </p>
      *
      * @param obj The object to checks if it is null.
-     * @param msg The msg to send with the exception.
+     * @param msg The msg to send with the exception. {@code ""} if null.
      * @throws NullPointerException if object is {@code null}.
      */
     public static void isNull(Object obj, String msg) {
         if (isNull(obj))
-            throw new NullPointerException(msg == null ? "[Unknown]" : msg);
+            throw new NullPointerException(msg == null ? "" : msg);
     }
 
 
@@ -72,5 +72,31 @@ public class Validator {
      */
     public static <T> T orElse(T obj, T def) {
         return (obj == null) ? def : obj;
+    }
+
+    /**
+     * Throws a new {@link IllegalArgumentException} with the {@code msg}
+     * if the provided condition is {@code false}.
+     *
+     * @param condition The condition to evaluate;
+     * @param msg       The message to include in the exception; {@code ""} if null.
+     * @return {@code true} if the condition is true;
+     */
+    public static boolean checkIf(boolean condition, String msg) {
+        if (!condition)
+            throw new IllegalArgumentException(msg == null ? "" : msg);
+        return true;
+    }
+
+    /**
+     * Throws a new {@link IllegalArgumentException} with the {@code msg}
+     * if the provided condition is {@code false}.
+     *
+     * @param supplier The supplier to evaluate as condition;
+     * @param msg      The message to include in the exception; {@code ""} if null.
+     * @return {@code true} if the condition is true;
+     */
+    public static boolean checkIf(Supplier<Boolean> supplier, String msg) {
+        return checkIf(supplier.get(), msg);
     }
 }
