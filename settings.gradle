@@ -7,6 +7,6 @@
 
 rootProject.name = 'formatter'
 
-include('main')
-include('test')
+include('core')
 include('jmh')
+include('color')

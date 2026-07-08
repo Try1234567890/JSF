@@ -7,8 +7,10 @@ repositories {
 }
 
 dependencies {
-    implementation project(':main')
+    implementation(project(path: ':core', configuration: 'shadow'))
+    implementation(project(path: ':color', configuration: 'shadow'))
 }
+
 jmh {
     benchmarkMode = ['thrpt', 'avgt']
     iterations = 5
