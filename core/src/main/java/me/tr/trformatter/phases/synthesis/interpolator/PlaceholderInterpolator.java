@@ -1,6 +1,8 @@
 package me.tr.trformatter.phases.synthesis.interpolator;
 
 import me.tr.trformatter.phases.synthesis.interpolator.components.IndexedPlaceholder;
+import me.tr.utilities.validators.Preconditions;
+import me.tr.utilities.validators.ValidationUtils;
 
 import java.util.List;
 
@@ -10,9 +12,7 @@ public class PlaceholderInterpolator implements Interpolator {
 
     @Override
     public String interpolate(String text, List<IndexedPlaceholder> placeholderResults) {
-        if (placeholderResults == null || placeholderResults.isEmpty()) {
-            return text;
-        }
+        if (ValidationUtils.isNull(placeholderResults)) return text;
 
         StringBuilder builder = new StringBuilder();
         int lastIndex = 0;

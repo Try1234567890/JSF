@@ -1,6 +1,6 @@
 package me.tr.trformatter.phases.analysis.scanner.chars;
 
-import me.tr.trformatter.registries.Registry;
+import me.tr.utilities.registries.Registry;
 
 import java.util.Collection;
 
@@ -8,17 +8,16 @@ public class Characters extends Registry<String, Character> {
     private Characters() {
     }
 
-    private static Characters instance;
-
-    public static Characters getInstance() {
-        if (instance == null) {
-            instance = new Characters();
-        }
-        return instance;
+    private record Holder() {
+        private static final Characters INSTANCE = new Characters();
     }
 
-    public static Character get(String key) {
-        return getInstance().retrieve(key);
+    public static Characters getInstance() {
+        return Holder.INSTANCE;
+    }
+
+    public static Character retrieve(String key) {
+        return getInstance().get(key);
     }
 
     public static void add(Character value) {
@@ -34,10 +33,10 @@ public class Characters extends Registry<String, Character> {
     }
 
     public static boolean contains(String key) {
-        return getInstance().has(key);
+        return getInstance().containsKey(key);
     }
 
     public static Collection<Character> all() {
-        return getInstance().getRegistry().values();
+        return getInstance().values();
     }
 }

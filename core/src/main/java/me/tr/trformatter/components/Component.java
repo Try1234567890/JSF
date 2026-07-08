@@ -10,5 +10,4 @@ public interface Component {
      * @return The component {@link UID}
      */
     UID getUID();
-
 }

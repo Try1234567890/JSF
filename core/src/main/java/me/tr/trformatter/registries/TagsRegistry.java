@@ -9,13 +9,13 @@ import me.tr.trformatter.defaults.tags.readfile.ReadFile;
 import me.tr.trformatter.defaults.tags.sendmessage.SendMessage;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
+import me.tr.utilities.registries.Registry;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 public class TagsRegistry extends Registry<UID, Tag> {
-    private static TagsRegistry instance;
-
     private TagsRegistry() {
         register(new SendMessage());
         register(new SystemEnv());
@@ -25,38 +25,39 @@ public class TagsRegistry extends Registry<UID, Tag> {
         register(new Now());
     }
 
+    private record Holder() {
+        private static final TagsRegistry INSTANCE = new TagsRegistry();
+    }
+
     public static TagsRegistry getInstance() {
-        if (instance == null) {
-            instance = new TagsRegistry();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     @Override
-    public void register(UID key, Tag value) {
-        if (has(key)) {
+    public Tag register(UID key, Tag value) throws DuplicateUIDException {
+        if (containsKey(key)) {
             throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the tag UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-OsName\").");
         }
-        super.register(key, value);
+        return super.register(key, value);
     }
 
-    public void register(Tag value) {
+    public Tag register(Tag value) throws DuplicateUIDException {
         UID key = value.getUID();
-        if (has(key)) {
+        if (containsKey(key)) {
             throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the tag UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-IsLinux\").");
         }
-        super.register(key, value);
+        return super.register(key, value);
     }
 
-    public Tag retrieve(String key) {
-        for (Map.Entry<UID, Tag> entry : getRegistry().entrySet()) {
+    public Optional<Tag> retrieve(String key) {
+        for (Map.Entry<UID, Tag> entry : getInstance().internalMap.entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
-                    || Arrays.asList(uid.getAliases()).contains(key)) {
-                return entry.getValue();
+                    || uid.getAliasesAsSet().contains(key)) {
+                return Optional.ofNullable(entry.getValue());
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 }

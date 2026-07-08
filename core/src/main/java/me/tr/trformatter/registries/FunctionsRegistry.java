@@ -9,14 +9,13 @@ import me.tr.trformatter.defaults.functions.cases.ToLowerCase;
 import me.tr.trformatter.defaults.functions.cases.ToUpperCase;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
+import me.tr.utilities.registries.Registry;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class FunctionsRegistry extends Registry<UID, Function> {
-    private static FunctionsRegistry instance;
-
     private FunctionsRegistry() {
         register(new ToLowerCase());
         register(new ToUpperCase());
@@ -26,39 +25,39 @@ public class FunctionsRegistry extends Registry<UID, Function> {
         register(new Split());
     }
 
+    private record Holder() {
+        private static final FunctionsRegistry INSTANCE = new FunctionsRegistry();
+    }
+
     public static FunctionsRegistry getInstance() {
-        if (instance == null) {
-            instance = new FunctionsRegistry();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     @Override
-    public void register(UID key, Function value) {
-        if (has(key)) {
+    public Function register(UID key, Function value) throws DuplicateUIDException {
+        if (containsKey(key)) {
             throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the function UID is unique. Suggestion: prefix it with your app name (e.g., \"formatter_lower_case\").");
         }
-        super.register(key, value);
+       return super.register(key, value);
     }
 
-    public void register(Function value) {
+    public Function register(Function value) throws DuplicateUIDException {
         UID key = value.getUID();
-        if (has(key)) {
+        if (containsKey(key)) {
             throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the function UID is unique. Suggestion: prefix it with your app name (e.g., \"formatter_lower_case\").");
         }
-        super.register(key, value);
+        return super.register(key, value);
     }
 
-    public Function retrieve(String key) {
-
-        for (Map.Entry<UID, Function> entry : getRegistry().entrySet()) {
+    public Optional<Function> retrieve(String key) {
+        for (Map.Entry<UID, Function> entry : getInstance().internalMap.entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
-                    || Arrays.asList(uid.getAliases()).contains(key)) {
-                return entry.getValue();
+                    || uid.getAliasesAsSet().contains(key)) {
+                return Optional.ofNullable(entry.getValue());
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 }

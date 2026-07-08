@@ -10,12 +10,12 @@ public class Character implements Cloneable {
     }
 
     public static Character get(String name) {
-        return Characters.get(name);
+        return Characters.retrieve(name);
     }
 
     public static Character of(String name, String delimiter) {
         if (Characters.contains(name)) {
-            return Characters.get(name);
+            return Characters.retrieve(name);
         } else {
             Character character = new Character(name, delimiter);
             Characters.add(name, character);

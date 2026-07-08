@@ -1,45 +1,42 @@
 package me.tr.trformatter.uids;
 
-import me.tr.trformatter.utility.Validator;
+import me.tr.utilities.validators.Preconditions;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * Represents a Unique Identifier (UID) for a system component.
- * <p>Each UID is defined by a primary name and an optional array aliases.</p>
- * <p>The structure of a {@code UID} consists of:</p>
- * <ul>
- * <li><b>Name:</b> The primary unique string used to identify the component.</li>
- * <li><b>Aliases:</b> An array of alternative names associated with the primary ID.</li>
+ * An UID (Unique Identifier) is a unique identifier for any components inside
+ * the entire library, including any third-party components.
+ * <p>
+ * The UID is used to identify components in the library and to avoid
+ * conflicts between different components.
+ * The {@code name} and {@code aliases} are case-sensitive and the {@code name}
+ * must be unique, instead the {@code aliases} can be null or empty.
+ * If two components have the same {@code name}, a {@link DuplicateUIDException} is thrown.
+ * <p>
+ * The convention is to use the own application name as a prefix for own components
+ * inside the {@code name} to prevent conflicts with others third-party components.
  */
 public class UID {
-    private String name;
-    private String[] aliases;
+    private final String name;
+    private final String[] aliases;
+    private final Set<String> aliasesSet;
 
     /**
      * Create a new Unique Identifier instance.
      *
      * @param name    The name to assign
      * @param aliases The aliases of the id; {@code They can be null or empty}.
-     * @throws NullPointerException if the id is null.
+     * @throws IllegalArgumentException if the {@code name} is null or empty.
      */
     public UID(String name, String... aliases) {
-        if (Validator.isNull(name))
-            throw new NullPointerException("ID cannot be null");
-
-
+        Preconditions.parameterNotNull(name, "name");
         this.name = name;
-        this.aliases = aliases == null ? new String[0] : aliases;
-    }
-
-    /**
-     * Create a new Unique Identifier instance.
-     *
-     * @param name The name to assign
-     * @throws NullPointerException if the id is null.
-     */
-    public UID(String name) {
-        this(name, new String[0]);
+        this.aliases = Preconditions.simpleNotNull(aliases, new String[0]);
+        this.aliasesSet = new HashSet<>(Arrays.asList(aliases));
     }
 
     public static UID of(String name) {
@@ -50,16 +47,12 @@ public class UID {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String[] getAliases() {
         return aliases;
     }
 
-    public void setAliases(String[] aliases) {
-        this.aliases = aliases;
+    public Set<String> getAliasesAsSet() {
+        return aliasesSet;
     }
 
     @Override
@@ -79,6 +72,6 @@ public class UID {
 
     @Override
     public String toString() {
-        return "UID[Name: \"" + name + "\" | Aliases: " + Arrays.toString(getAliases()) + "]";
+        return "UID[Name: \"" + name + "\" | Aliases: " + String.join(", ", aliases) + "]";
     }
 }

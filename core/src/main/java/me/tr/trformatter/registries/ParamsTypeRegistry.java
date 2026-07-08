@@ -1,13 +1,13 @@
 package me.tr.trformatter.registries;
 
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.types.*;
+import me.tr.utilities.registries.Registry;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, ParamType<?>> {
-    private static ParamsTypeRegistry instance;
     private static final PlaceholderTokenType PLACEHOLDER = new PlaceholderTokenType();
     private static final BooleanType BOOLEAN = new BooleanType();
     private static final ByteType BYTE = new ByteType();
@@ -18,7 +18,6 @@ public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, Para
     private static final LongType LONG = new LongType();
     private static final ShortType SHORT = new ShortType();
     private static final StringType STRING = new StringType();
-
 
     private ParamsTypeRegistry() {
         register(PLACEHOLDER::isCorrectType, PLACEHOLDER);
@@ -37,25 +36,26 @@ public class ParamsTypeRegistry extends Registry<Function<String, Boolean>, Para
 
     }
 
-    public static ParamsTypeRegistry getInstance() {
-        if (instance == null) {
-            instance = new ParamsTypeRegistry();
-        }
-        return instance;
+    private record Holder() {
+        private static final ParamsTypeRegistry INSTANCE = new ParamsTypeRegistry();
     }
 
-    public ParamType<?> retrieve(String key) {
+    public static ParamsTypeRegistry getInstance() {
+        return Holder.INSTANCE;
+    }
 
-        for (Map.Entry<Function<String, Boolean>, ParamType<?>> entry : getRegistry().entrySet()) {
+    public Optional<ParamType<?>> retrieve(String key) {
+
+        for (Map.Entry<Function<String, Boolean>, ParamType<?>> entry : getInstance().internalMap.entrySet()) {
             if (entry.getKey().apply(key)) {
-                return entry.getValue();
+                return Optional.ofNullable(entry.getValue());
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
-    public static ParamType<?> get(String key) {
+    public static Optional<ParamType<?>> get(String key) {
         return getInstance().retrieve(key);
     }
 

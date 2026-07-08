@@ -24,6 +24,7 @@ public class TrFormatterAPI {
 
     public static String format(String text, CharacterSet characters) {
         List<IndexedRawPlaceholder> raws = PlaceholderScanner.of(characters).scan(text);
+
         if (raws.isEmpty()) {
             // Simple optimization, do not continue if there is no placeholders.
             return text;

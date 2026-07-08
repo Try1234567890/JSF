@@ -1,9 +1,9 @@
 package me.tr.trformatter.components;
 
-import me.tr.trformatter.utility.Validator;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.manager.ParamsContainer;
 import me.tr.trformatter.registries.TagsRegistry;
 import me.tr.trformatter.uids.UID;
+import me.tr.utilities.validators.Preconditions;
 
 import java.util.Optional;
 
@@ -11,8 +11,7 @@ public abstract class Tag implements Component {
     private final UID uid;
 
     public Tag(UID uid) {
-        Validator.isNull(uid, "The identifier cannot be null");
-        this.uid = uid;
+        this.uid = Preconditions.simpleParameterNotNull(uid, "uid");
     }
 
     @Override
@@ -30,11 +29,11 @@ public abstract class Tag implements Component {
 
 
     public static Optional<Tag> getTag(UID name) {
-        return Optional.ofNullable(TagsRegistry.getInstance().retrieve(name));
+        return TagsRegistry.getInstance().getOptional(name);
     }
 
     public static Optional<Tag> getTag(String name) {
-        return Optional.ofNullable(TagsRegistry.getInstance().retrieve(name));
+        return TagsRegistry.getInstance().retrieve(name);
     }
 
 }

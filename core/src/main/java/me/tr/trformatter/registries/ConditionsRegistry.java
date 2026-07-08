@@ -5,52 +5,53 @@ import me.tr.trformatter.defaults.conditions.IfDate;
 import me.tr.trformatter.defaults.conditions.IfTime;
 import me.tr.trformatter.uids.DuplicateUIDException;
 import me.tr.trformatter.uids.UID;
+import me.tr.utilities.registries.Registry;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ConditionsRegistry extends Registry<UID, Condition> {
-    private static ConditionsRegistry instance;
-
     private ConditionsRegistry() {
         register(new IfTime());
         register(new IfDate());
     }
 
+    private record Holder() {
+        private static final ConditionsRegistry INSTANCE = new ConditionsRegistry();
+    }
+
     public static ConditionsRegistry getInstance() {
-        if (instance == null) {
-            instance = new ConditionsRegistry();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     @Override
-    public void register(UID key, Condition value) {
-        if (has(key)) {
+    public Condition register(UID key, Condition value) throws DuplicateUIDException {
+        if (containsKey(key)) {
             throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the condition UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-IsLinux\").");
         }
-        super.register(key, value);
+        return super.register(key, value);
     }
 
-    public void register(Condition value) {
+    public Condition register(Condition value) throws DuplicateUIDException {
         UID key = value.getUID();
-        if (has(key)) {
+        if (containsKey(key)) {
             throw new DuplicateUIDException("Duplicate UID detected for: " + value + ". Please ensure the condition UID is unique. Suggestion: prefix it with your app name (e.g., \"TrFormatter-IsLinux\").");
         }
-        super.register(key, value);
+        return super.register(key, value);
     }
 
-    public Condition retrieve(String key) {
+    public Optional<Condition> retrieve(String key) {
 
-        for (Map.Entry<UID, Condition> entry : getRegistry().entrySet()) {
+        for (Map.Entry<UID, Condition> entry : getInstance().internalMap.entrySet()) {
             UID uid = entry.getKey();
             if (uid.getName().equals(key)
-                    || Arrays.asList(uid.getAliases()).contains(key)) {
-                return entry.getValue();
+                    || uid.getAliasesAsSet().contains(key)) {
+                return Optional.ofNullable(entry.getValue());
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 }

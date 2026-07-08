@@ -3,7 +3,7 @@ package me.tr.trformatter.components;
 import me.tr.trformatter.phases.analysis.lexer.tokens.params.manager.ParamsContainer;
 import me.tr.trformatter.registries.FunctionsRegistry;
 import me.tr.trformatter.uids.UID;
-import me.tr.trformatter.utility.Validator;
+import me.tr.utilities.validators.Preconditions;
 
 import java.util.Optional;
 
@@ -11,8 +11,7 @@ public abstract class Function implements Component {
     private final UID uid;
 
     public Function(UID uid) {
-        Validator.isNull(uid, "The identifier cannot be null");
-        this.uid = uid;
+        this.uid = Preconditions.parameterNotNull(uid, "uid");
     }
 
     @Override
@@ -30,11 +29,11 @@ public abstract class Function implements Component {
 
 
     public static Optional<Function> getFunction(UID name) {
-        return Optional.ofNullable(FunctionsRegistry.getInstance().retrieve(name));
+        return FunctionsRegistry.getInstance().getOptional(name);
     }
 
     public static Optional<Function> getFunction(String name) {
-        return Optional.ofNullable(FunctionsRegistry.getInstance().retrieve(name));
+        return FunctionsRegistry.getInstance().retrieve(name);
     }
 
 }
